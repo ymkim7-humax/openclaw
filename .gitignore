@@ -1,0 +1,7 @@
+agents/
+cron/runs/
+*.jsonl
+*.sqlite
+*.log
+*.bak
+.DS_Store
