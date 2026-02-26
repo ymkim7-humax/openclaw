@@ -1,0 +1,7 @@
+openclaw.bak/
+hp2236b/
+release/
+*.jsonl
+*.log
+*.sqlite
+*.swp
