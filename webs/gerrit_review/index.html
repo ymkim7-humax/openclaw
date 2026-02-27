@@ -1,89 +1,67 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Gerrit Review Analytics</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Public Gerrit Review Analytics</title>
     <style>
         body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
         .review-card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; margin-bottom: 20px; }
-        .lgtm-section { background: rgba(52, 211, 153, 0.1); border-left: 4px solid #34d399; padding: 15px; border-radius: 4px; margin-top: 10px; }
-        .detail-section { background: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 15px; border-radius: 4px; margin-top: 10px; }
-        .lgtm-badge { background: #065f46; color: #34d399; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
-        .detail-badge { background: #1e3a8a; color: #93c5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .lgtm-badge { background: #065f46; color: #34d399; }
+        .detail-badge { background: #1e3a8a; color: #93c5fd; }
         .subject { font-size: 1.25rem; font-weight: bold; color: #f8fafc; }
         .meta { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
-        summary { cursor: pointer; color: #3b82f6; font-weight: bold; margin-top: 10px; }
-        summary:hover { text-decoration: underline; }
         pre { background: #000; padding: 15px; border-radius: 6px; overflow-x: auto; color: #e2e8f0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
         a { color: #3b82f6; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
     </style>
-</head>
-<body>
+    </head><body>
     <div style="max-width: 1000px; margin: auto;">
-        <a href="../../../" class="back-link">← Back to Portal</a>
-        <h1 style="text-align:center; color:#3b82f6;">🔍 Gerrit Review Summary</h1>
-        <div id="reviews-container"></div>
-    </div>
+        <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
+        <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
+        <div id="reviews-container">
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-333] Implement R_CPE7 Diagnostics - HTTP</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Ray</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### HTTP Diagnostics Implementation Analysis
 
-    <script>
-        const INTERNAL_IP = "10.250.4.166";
+**Observations:**
+- `FalUtil_string_validate` 도입으로 사용자 입력값(URL) 검증 로직 강화.
+- `wa_build_rcpe7_device_payload` 분리로 코드 가독성 향상.
 
-        async function loadReviews() {
-            try {
-                const response = await fetch('reviews.json');
-                const data = await response.json();
-                const container = document.getElementById('reviews-container');
-                container.innerHTML = '';
+**Concerns:**
+1. **Security (Command Injection):** `system(cmd)`를 사용하여 `curl`을 호심합니다. 검증 로직이 있더라도 `execl` 또는 `POSIX spawn` 계열 함수를 사용하여 shell 메타 문자 해석 위험을 원쳌 차단하는 것을 권장합니다.
+2. **Parsing Logic:** `extracted_domain` 추출 시 `strstr`과 fix offset(`strlen("http://")`)을 사용하는데, `HTTP://`(대문자) 나 Port 번호가 포함된 경우 오동작 가능성이 있습니다.
+3. **Memory:** `TreeMapObject` 포인터 처리 시 `root->set` 방식으로 변경되었는데, stack 변수인 `payload`의 lifecycle을 다시 확인해야 합니다.</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-182] Adjust boot sequence</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Yeongman Kim(김영만)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### Boot Sequence Reordering Analysis
 
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === INTERNAL_IP;
+**Pros:**
+- LAN/PON 우선 시작을 통해 네트워크 연결 성립 셍션을 앞당김.
+- `dnsmasq` 최적화(`noping`, `force`) 및 `BOOT` 플러그 제거로 DHCP 서비스 응답 셍션 단쵕.
 
-                Object.values(data).sort((a, b) => b.timestamp - a.timestamp).forEach(review => {
-                    const card = document.createElement('div');
-                    card.className = 'review-card';
-                    
-                    const isLgtm = review.verdict === 'LGTM';
-                    const badgeClass = isLgtm ? 'lgtm-badge' : 'detail-badge';
-                    const sectionClass = isLgtm ? 'lgtm-section' : 'detail-section';
-                    const badgeText = isLgtm ? 'LGTM' : 'DETAILED FEEDBACK';
-
-                    // Environment-aware link
-                    const subjectHtml = isLocal 
-                        ? `<a href="${review.url}" target="_blank">${review.subject}</a>`
-                        : review.subject;
-
-                    let opinionHtml = '';
-                    if (isLgtm) {
-                        opinionHtml = `<div class="${sectionClass}">LGTM</div>`;
-                    } else {
-                        opinionHtml = `
-                            <div class="${sectionClass}">
-                                <details>
-                                    <summary>View AI Analysis & Suggestions</summary>
-                                    <pre>${review.opinion}</pre>
-                                </details>
-                            </div>
-                        `;
-                    }
-
-                    card.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <div class="subject">${subjectHtml}</div>
-                            <span class="${badgeClass}">${badgeText}</span>
-                        </div>
-                        <div class="meta">
-                            Project: <b>${review.project}</b> | Owner: <b>${review.owner}</b> | Patch Set: ${review.ps_num}
-                        </div>
-                        ${opinionHtml}
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (err) {
-                console.error('Reviews Error:', err);
-            }
-        }
-        loadReviews();
-    </script>
-</body>
-</html>
+**Risks & Suggestions:**
+1. **Dropbear/uhttpd (START=99):** 맨 마지막으로 밀려났습니다. 만약 부팅 중간에 서비스 프로세스가 항(Hang) 되면 Telnet/SSH 접쇍이 안 되어 디버깅이 힘들 수 있습니다. 테스트 버전에서는 조금 당기는 것을 게토.
+2. **wait_lanup (START=23):** `ubus call`을 loop로 돌리는데, 최대 타임아웃 설정이 없어 네트워크 츹셋 초기화 실패 시 부팅 시퀀스 전체가 멈출 수 있습니다.</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-396][HP-2236B]Issue where WAN Service list defaults to "TR069_INTERNET" for clay</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: RG/frontend/clay | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LGTM</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-396][HP-2236B]Issue where WAN Service list defaults to "TR069_INTERNET"</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LGTM</pre></div>
+        </div></div></div></body></html>
