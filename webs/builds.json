@@ -1,10 +1,20 @@
 [
   {
+    "timestamp": "2026-02-27 16:35:44",
+    "model": "HP2272B",
+    "git_hash": "8a1854ee1",
+    "bin_size": 59011072,
+    "rootfs_files": 4245,
+    "filename": "hp2272b_tclinux_20260227_100207.bin",
+    "file_exists": true,
+    "changes": "+/- 0"
+  },
+  {
     "timestamp": "2026-02-27 10:30:31",
     "model": "HP2236B",
     "git_hash": "e4c6cd425",
     "bin_size": 57708544,
-    "rootfs_files": 0,
+    "rootfs_files": 4301,
     "filename": "hp2236b_tclinux_20260227_100207.bin",
     "file_exists": true,
     "changes": "N/A"
@@ -14,7 +24,7 @@
     "model": "HP2272B",
     "git_hash": "8a1854ee1",
     "bin_size": 59011072,
-    "rootfs_files": 0,
+    "rootfs_files": 4245,
     "filename": "hp2272b_tclinux_20260225_195053.bin",
     "file_exists": true,
     "changes": "N/A"
@@ -24,7 +34,7 @@
     "model": "HP2236B",
     "git_hash": "e4c6cd425",
     "bin_size": 57720832,
-    "rootfs_files": 0,
+    "rootfs_files": 4301,
     "filename": "hp2236b_tclinux_20260225_195053.bin",
     "file_exists": true,
     "changes": "N/A"
