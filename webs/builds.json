@@ -1,0 +1,50 @@
+{
+  "HP2272B": [
+    {
+      "timestamp": "2026-02-27 16:35:44",
+      "model": "HP2272B",
+      "git_hash": "8a1854ee1",
+      "linux_size": 59011072,
+      "boot_size": 524288,
+      "rootfs_files": 4245,
+      "linux_file": "hp2272b_tclinux_20260227_100207.bin",
+      "boot_file": "hp2272b_tcboot_20260227_100207.bin",
+      "changes": "N/A"
+    },
+    {
+      "timestamp": "2026-02-25 21:58:37",
+      "model": "HP2272B",
+      "git_hash": "8a1854ee1",
+      "linux_size": 59011072,
+      "boot_size": 524288,
+      "rootfs_files": 4245,
+      "linux_file": "hp2272b_tclinux_20260225_195053.bin",
+      "boot_file": "hp2272b_tcboot_20260225_195053.bin",
+      "changes": "N/A"
+    }
+  ],
+  "HP2236B": [
+    {
+      "timestamp": "2026-02-27 10:30:31",
+      "model": "HP2236B",
+      "git_hash": "e4c6cd425",
+      "linux_size": 57708544,
+      "boot_size": 524288,
+      "rootfs_files": 4301,
+      "linux_file": "hp2236b_tclinux_20260227_100207.bin",
+      "boot_file": "hp2236b_tcboot_20260227_100207.bin",
+      "changes": "N/A"
+    },
+    {
+      "timestamp": "2026-02-25 21:58:16",
+      "model": "HP2236B",
+      "git_hash": "e4c6cd425",
+      "linux_size": 57720832,
+      "boot_size": 524288,
+      "rootfs_files": 4301,
+      "linux_file": "hp2236b_tclinux_20260225_195053.bin",
+      "boot_file": "hp2236b_tcboot_20260225_195053.bin",
+      "changes": "N/A"
+    }
+  ]
+}

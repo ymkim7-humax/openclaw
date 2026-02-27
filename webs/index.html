@@ -2,43 +2,104 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>OC Public Portal</title>
+    <title>Build Analytics Dashboard</title>
     <style>
-        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 40px; text-align: center; }
-        .grid { display: grid; gap: 20px; max-width: 600px; margin: 40px auto; }
-        .btn { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 8px; text-decoration: none; color: inherit; transition: 0.2s; text-align: left; display: flex; align-items: center; }
-        .btn:hover { border-color: #3b82f6; background: #243352; }
-        .icon { font-size: 2rem; margin-right: 20px; }
-        .info { flex: 1; }
-        .name { font-weight: bold; font-size: 1.1rem; color: #34d399; }
-        .desc { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
-        h1 { color: #3b82f6; }
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
+        .model-section { margin-bottom: 40px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1100px; margin: auto; }
+        h2 { color: #3b82f6; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; padding: 12px 10px; color: #94a3b8; font-size: 12px; border-bottom: 2px solid #334155; text-transform: uppercase; }
+        td { padding: 12px 10px; font-size: 13px; border-bottom: 1px solid #1e293b; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        code { background: #000; padding: 2px 5px; border-radius: 3px; color: #34d399; font-size: 11px; }
+        .success { color: #34d399; font-weight: bold; }
+        .label { color: #64748b; font-size: 11px; margin-right: 5px; }
+        .changes { color: #60a5fa; font-weight: bold; }
+        .download-link { color: #34d399; text-decoration: none; border-bottom: 1px dashed #34d399; }
+        .download-link:hover { color: #00e676; border-bottom-style: solid; }
+        .internal-note { color: #64748b; font-size: 10px; font-style: italic; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
-    <h1>🚀 OC Public Status</h1>
-    <div class="grid">
-        <a href="auto_build/index.html" class="btn">
-            <div class="icon">📊</div>
-            <div class="info">
-                <div class="name">Build Status</div>
-                <div class="desc">Artifact hashes & metadata</div>
-            </div>
-        </a>
-        <a href="gerrit_review/index.html" class="btn">
-            <div class="icon">🔍</div>
-            <div class="info">
-                <div class="name">Review Analytics</div>
-                <div class="desc">Public code quality report</div>
-            </div>
-        </a>
-        <a href="hp2236b_analysis/index.html" class="btn">
-            <div class="icon">🧠</div>
-            <div class="info">
-                <div class="name">Analysis Progress</div>
-                <div class="desc">HP2236B codebase mapping status</div>
-            </div>
-        </a>
+    <div id="dashboard-content">
+        <h1 style="text-align:center; color:#3b82f6;">📊 Build Analytics Dashboard</h1>
+        <div id="models-container"></div>
     </div>
+
+    <script>
+        const INTERNAL_IP = "10.250.4.166";
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetch('builds.json');
+                const data = await response.json();
+                const container = document.getElementById('models-container');
+                container.innerHTML = '';
+
+                // Detect environment
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === INTERNAL_IP;
+
+                Object.keys(data).sort().forEach(model => {
+                    const section = document.createElement('div');
+                    section.className = 'model-section';
+                    
+                    let rowsHtml = '';
+                    data[model].forEach(build => {
+                        // Generate dynamic link based on environment
+                        // Vercel links will point back to the local server's internal IP
+                        const baseUrl = isLocal ? 'jobs/auto_build/release/' : `http://${INTERNAL_IP}/jobs/auto_build/release/`;
+                        
+                        const linuxLink = `<a href="${baseUrl}${build.linux_file}" class="download-link">${build.linux_file}</a>`;
+                        const bootLink = build.boot_file ? `<a href="${baseUrl}${build.boot_file}" class="download-link">${build.boot_file}</a>` : 'N/A';
+                        const envNote = isLocal ? '' : '<span class="internal-note">(Humax Network Required)</span>';
+
+                        rowsHtml += `
+                            <tr>
+                                <td style="color: #94a3b8; white-space: nowrap;">${build.timestamp}</td>
+                                <td class="success">SUCCESS</td>
+                                <td><code>${build.git_hash}</code></td>
+                                <td>
+                                    <div style="margin-bottom:4px;"><span class="label">OS:</span>${build.linux_size.toLocaleString()} B</div>
+                                    <div><span class="label">BOOT:</span>${build.boot_size.toLocaleString()} B</div>
+                                </td>
+                                <td>${build.rootfs_files} files</td>
+                                <td class="changes">${build.changes}</td>
+                                <td>
+                                    <div style="margin-bottom:8px;">${linuxLink}</div>
+                                    <div>${bootLink}</div>
+                                    ${envNote}
+                                </td>
+                            </tr>
+                        `;
+                    });
+
+                    section.innerHTML = `
+                        <div class="card">
+                            <h2>Project: ${model}</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date (KST)</th>
+                                        <th>Status</th>
+                                        <th>Git Hash</th>
+                                        <th>Sizes</th>
+                                        <th>RootFS</th>
+                                        <th>Changes</th>
+                                        <th>Download Artifacts</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rowsHtml}</tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(section);
+                });
+            } catch (err) {
+                console.error('Dashboard Error:', err);
+            }
+        }
+        loadDashboard();
+    </script>
 </body>
 </html>
