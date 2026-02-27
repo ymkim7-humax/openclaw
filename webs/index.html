@@ -6,16 +6,39 @@
     <style>
         body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 40px; text-align: center; }
         .grid { display: grid; gap: 20px; max-width: 600px; margin: 40px auto; }
-        .btn { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 8px; text-decoration: none; color: inherit; transition: 0.2s; }
+        .btn { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 8px; text-decoration: none; color: inherit; transition: 0.2s; text-align: left; display: flex; align-items: center; }
         .btn:hover { border-color: #3b82f6; background: #243352; }
+        .icon { font-size: 2rem; margin-right: 20px; }
+        .info { flex: 1; }
+        .name { font-weight: bold; font-size: 1.1rem; color: #34d399; }
+        .desc { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
         h1 { color: #3b82f6; }
     </style>
 </head>
 <body>
     <h1>🚀 OC Public Status</h1>
     <div class="grid">
-        <a href="auto_build/index.html" class="btn">📊 Build Status</a>
-        <a href="gerrit_review/index.html" class="btn">🔍 Review Analytics</a>
+        <a href="auto_build/index.html" class="btn">
+            <div class="icon">📊</div>
+            <div class="info">
+                <div class="name">Build Status</div>
+                <div class="desc">Artifact hashes & metadata</div>
+            </div>
+        </a>
+        <a href="gerrit_review/index.html" class="btn">
+            <div class="icon">🔍</div>
+            <div class="info">
+                <div class="name">Review Analytics</div>
+                <div class="desc">Public code quality report</div>
+            </div>
+        </a>
+        <a href="hp2236b_analysis/index.html" class="btn">
+            <div class="icon">🧠</div>
+            <div class="info">
+                <div class="name">Analysis Progress</div>
+                <div class="desc">HP2236B codebase mapping status</div>
+            </div>
+        </a>
     </div>
 </body>
 </html>

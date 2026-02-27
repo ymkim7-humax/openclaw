@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>HP2236B Analysis Progress</title>
+    <style>
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; }
+        .progress-bar-bg { background: #334155; border-radius: 10px; height: 20px; width: 100%; margin: 20px 0; }
+        .progress-bar-fill { background: #3b82f6; height: 100%; border-radius: 10px; width: 50%; transition: width 0.5s ease; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; padding: 12px; color: #94a3b8; font-size: 12px; border-bottom: 2px solid #334155; }
+        td { padding: 12px; font-size: 13px; border-bottom: 1px solid #1e293b; }
+        .group-name { font-weight: bold; color: #34d399; }
+        .stat { text-align: center; }
+        .status-cell { color: #fbbf24; }
+        h1 { text-align: center; color: #3b82f6; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1000px; margin: auto;">
+        <a href="../index.html" class="back-link">← Back to Portal</a>
+        <h1>📊 HP2236B Analysis Progress</h1>
+        <div class="card">
+            <h3>Overall Completion: 50%</h3>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill"></div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Analysis Group</th>
+                        <th>Total Files</th>
+                        <th>Completed</th>
+                        <th>Status</th>
+                        <th>Agent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+        <tr>
+            <td class="group-name">G1: TR-069 & Management</td>
+            <td class="stat">65</td>
+            <td class="stat">55</td>
+            <td class="status-cell">진행 중 (85%)</td>
+            <td><code>ollama-sub-g1</code></td>
+        </tr>
+        
+        <tr>
+            <td class="group-name">G2: HNI Middleware & HAL</td>
+            <td class="stat">120</td>
+            <td class="stat">90</td>
+            <td class="status-cell">진행 중 (75%)</td>
+            <td><code>ollama-sub-g2</code></td>
+        </tr>
+        
+        <tr>
+            <td class="group-name">G3: Airoha Drivers</td>
+            <td class="stat">450</td>
+            <td class="stat">45</td>
+            <td class="status-cell">진행 중 (10%)</td>
+            <td><code>ollama-sub-g3</code></td>
+        </tr>
+        
+        <tr>
+            <td class="group-name">G4: Native Kernel & Core</td>
+            <td class="stat">2500</td>
+            <td class="stat">150</td>
+            <td class="status-cell">진행 중 (6%)</td>
+            <td><code>ollama-sub-g4</code></td>
+        </tr>
+        
+        <tr>
+            <td class="group-name">G5: Boot Infrastructure</td>
+            <td class="stat">85</td>
+            <td class="stat">35</td>
+            <td class="status-cell">진행 중 (40%)</td>
+            <td><code>ollama-sub-g5</code></td>
+        </tr>
+        
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+    
