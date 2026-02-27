@@ -35,7 +35,6 @@
         
         async function loadDashboard() {
             try {
-                // Fetch data from local json in same directory
                 const response = await fetch('builds.json');
                 const data = await response.json();
                 const container = document.getElementById('models-container');
@@ -49,15 +48,19 @@
                     
                     let rowsHtml = '';
                     data[model].forEach(build => {
-                        // Link back to the release folder
-                        // Adjusting paths:
-                        // Local: webs/local/jobs/auto_build/webs/index.html -> webs/local/jobs/auto_build/release/
-                        // GitHub: webs/auto_build/index.html -> points back to Internal IP
                         const baseUrl = isLocal ? '../release/' : `http://${INTERNAL_IP}/jobs/auto_build/release/`;
                         
                         const linuxLink = `<a href="${baseUrl}${build.linux_file}" class="download-link">${build.linux_file}</a>`;
                         const bootLink = build.boot_file ? `<a href="${baseUrl}${build.boot_file}" class="download-link">${build.boot_file}</a>` : 'N/A';
-                        const envNote = isLocal ? '' : '<span class="internal-note">(Humax Network Required)</span>';
+                        const envNote = isLocal ? '' : '<span class="internal-note">(Internal Download Only)</span>';
+
+                        const artifactHtml = isLocal 
+                            ? `<td>
+                                <div style="margin-bottom:8px;">${linuxLink}</div>
+                                <div>${bootLink}</div>
+                                ${envNote}
+                               </td>`
+                            : `<td style="color: #64748b; font-style: italic;">Access via local portal for downloads</td>`;
 
                         rowsHtml += `
                             <tr>
@@ -70,11 +73,7 @@
                                 </td>
                                 <td>${build.rootfs_files} files</td>
                                 <td class="changes">${build.changes}</td>
-                                <td>
-                                    <div style="margin-bottom:8px;">${linuxLink}</div>
-                                    <div>${bootLink}</div>
-                                    ${envNote}
-                                </td>
+                                ${artifactHtml}
                             </tr>
                         `;
                     });
