@@ -16,6 +16,9 @@
         .success { color: #34d399; font-weight: bold; }
         .label { color: #64748b; font-size: 11px; margin-right: 5px; }
         .changes { color: #60a5fa; font-weight: bold; }
+        .download-link { color: #34d399; text-decoration: none; border-bottom: 1px dashed #34d399; }
+        .download-link:hover { color: #00e676; border-bottom-style: solid; }
+        .internal-note { color: #64748b; font-size: 10px; font-style: italic; display: block; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -25,12 +28,17 @@
     </div>
 
     <script>
+        const INTERNAL_IP = "10.250.4.166";
+        
         async function loadDashboard() {
             try {
                 const response = await fetch('builds.json');
-                const data = await response.json(); // data is now { "HP2236B": [...], "HP2272B": [...] }
+                const data = await response.json();
                 const container = document.getElementById('models-container');
                 container.innerHTML = '';
+
+                // Detect environment
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === INTERNAL_IP;
 
                 Object.keys(data).sort().forEach(model => {
                     const section = document.createElement('div');
@@ -38,6 +46,14 @@
                     
                     let rowsHtml = '';
                     data[model].forEach(build => {
+                        // Generate dynamic link based on environment
+                        // Vercel links will point back to the local server's internal IP
+                        const baseUrl = isLocal ? 'jobs/auto_build/release/' : `http://${INTERNAL_IP}/jobs/auto_build/release/`;
+                        
+                        const linuxLink = `<a href="${baseUrl}${build.linux_file}" class="download-link">${build.linux_file}</a>`;
+                        const bootLink = build.boot_file ? `<a href="${baseUrl}${build.boot_file}" class="download-link">${build.boot_file}</a>` : 'N/A';
+                        const envNote = isLocal ? '' : '<span class="internal-note">(Humax Network Required)</span>';
+
                         rowsHtml += `
                             <tr>
                                 <td style="color: #94a3b8; white-space: nowrap;">${build.timestamp}</td>
@@ -49,9 +65,10 @@
                                 </td>
                                 <td>${build.rootfs_files} files</td>
                                 <td class="changes">${build.changes}</td>
-                                <td style="font-size: 11px; color: #64748b;">
-                                    <div style="margin-bottom:4px;">${build.linux_file}</div>
-                                    <div>${build.boot_file || 'N/A'}</div>
+                                <td>
+                                    <div style="margin-bottom:8px;">${linuxLink}</div>
+                                    <div>${bootLink}</div>
+                                    ${envNote}
                                 </td>
                             </tr>
                         `;
@@ -69,7 +86,7 @@
                                         <th>Sizes</th>
                                         <th>RootFS</th>
                                         <th>Changes</th>
-                                        <th>Artifacts</th>
+                                        <th>Download Artifacts</th>
                                     </tr>
                                 </thead>
                                 <tbody>${rowsHtml}</tbody>
