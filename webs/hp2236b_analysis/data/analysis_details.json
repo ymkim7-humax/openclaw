@@ -13,5 +13,18 @@
     "hal_pon.c": "PON state retrieval logic. Parses /proc/xpon/ponInfo and manages OMCI configuration commands via omcicfgCmd.",
     "hal_wifi.c": "WiFi configuration mapping for 802.11ax/be. Synchronizes bandwidth and PHY settings with SDK-specific hardware constants.",
     "hal_system.c": "System health and board monitoring. Tracks CPU thermal data and retrieves board-level metadata via ubus system calls."
+  },
+  "G3: Airoha Drivers": {
+    "mt_wifi7/": "MediaTek/Airoha WiFi 7 driver stack. Manages MLO (Multi-Link Operation), high-order QAM, and hardware-offloaded MAC processing.",
+    "npu/": "Network Processing Unit driver. Handles hardware flow acceleration (PPE) and QDMA-based packet routing to bypass CPU for high-speed traffic.",
+    "fe/": "Frame Engine driver. Manages the ingress/egress of Ethernet frames and integrates with the hardware switch fabric."
+  },
+  "G4: Native Kernel & Core": {
+    "linux-5.4.55/": "Base kernel configuration. Optimized for Aarch64 Cortex-A53 with custom patches for memory management and SMP load balancing in embedded environments.",
+    "libc/": "Musl-based C library implementation. Light-weight alternative to glibc, providing system call wrappers and thread management for the build-dir."
+  },
+  "G5: Boot Infrastructure": {
+    "tcboot/": "Primary bootloader logic. Manages SPI/eMMC flash initialization, hardware sanity checks, and handoff to ARM Trusted Firmware (ATF).",
+    "atf/": "ARM Trusted Firmware implementation. Provides secure world execution environment and manages power states (PSCI) before OS handover."
   }
 }
