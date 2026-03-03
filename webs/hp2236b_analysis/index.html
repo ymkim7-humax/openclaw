@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,84 +5,81 @@
     <title>HP2236B Analysis Progress</title>
     <style>
         body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
-        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; }
+        .container { max-width: 1000px; margin: auto; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; margin-bottom: 20px; }
         .progress-bar-bg { background: #334155; border-radius: 10px; height: 20px; width: 100%; margin: 20px 0; }
-        .progress-bar-fill { background: #3b82f6; height: 100%; border-radius: 10px; width: 50%; transition: width 0.5s ease; }
+        .progress-bar-fill { background: #3b82f6; height: 100%; border-radius: 10px; transition: width 0.5s ease; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th { text-align: left; padding: 12px; color: #94a3b8; font-size: 12px; border-bottom: 2px solid #334155; }
         td { padding: 12px; font-size: 13px; border-bottom: 1px solid #1e293b; }
         .group-name { font-weight: bold; color: #34d399; }
-        .stat { text-align: center; }
         .status-cell { color: #fbbf24; }
-        h1 { text-align: center; color: #3b82f6; }
+        h1, h2 { color: #3b82f6; }
         .back-link { display: inline-block; margin-bottom: 20px; color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
+        details { background: rgba(255,255,255,0.02); border-radius: 4px; padding: 10px; margin-top: 10px; border: 1px solid #1e293b; }
+        summary { cursor: pointer; font-weight: bold; color: #93c5fd; }
+        .finding { margin: 10px 0; padding-left: 10px; border-left: 2px solid #3b82f6; }
+        .file-name { font-weight: bold; color: #34d399; font-family: monospace; }
     </style>
 </head>
 <body>
-    <div style="max-width: 1000px; margin: auto;">
+    <div class="container">
         <a href="../index.html" class="back-link">← Back to Portal</a>
-        <h1>📊 HP2236B Analysis Progress</h1>
+        <h1>📊 HP2236B Analysis Dashboard</h1>
+        
         <div class="card">
-            <h3>Overall Completion: 50%</h3>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill"></div>
-            </div>
-            <table>
+            <h3>Overall Completion: <span id="overall-pct">0%</span></h3>
+            <div class="progress-bar-bg"><div id="progress-fill" class="progress-bar-fill"></div></div>
+            <table id="groups-table">
                 <thead>
-                    <tr>
-                        <th>Analysis Group</th>
-                        <th>Total Files</th>
-                        <th>Completed</th>
-                        <th>Status</th>
-                        <th>Agent</th>
-                    </tr>
+                    <tr><th>Analysis Group</th><th>Files</th><th>Done</th><th>Status</th></tr>
                 </thead>
-                <tbody>
-                    
-        <tr>
-            <td class="group-name">G1: TR-069 & Management</td>
-            <td class="stat">65</td>
-            <td class="stat">55</td>
-            <td class="status-cell">진행 중 (85%)</td>
-            <td><code>ollama-sub-g1</code></td>
-        </tr>
-        
-        <tr>
-            <td class="group-name">G2: HNI Middleware & HAL</td>
-            <td class="stat">120</td>
-            <td class="stat">90</td>
-            <td class="status-cell">진행 중 (75%)</td>
-            <td><code>ollama-sub-g2</code></td>
-        </tr>
-        
-        <tr>
-            <td class="group-name">G3: Airoha Drivers</td>
-            <td class="stat">450</td>
-            <td class="stat">45</td>
-            <td class="status-cell">진행 중 (10%)</td>
-            <td><code>ollama-sub-g3</code></td>
-        </tr>
-        
-        <tr>
-            <td class="group-name">G4: Native Kernel & Core</td>
-            <td class="stat">2500</td>
-            <td class="stat">150</td>
-            <td class="status-cell">진행 중 (6%)</td>
-            <td><code>ollama-sub-g4</code></td>
-        </tr>
-        
-        <tr>
-            <td class="group-name">G5: Boot Infrastructure</td>
-            <td class="stat">85</td>
-            <td class="stat">35</td>
-            <td class="status-cell">진행 중 (40%)</td>
-            <td><code>ollama-sub-g5</code></td>
-        </tr>
-        
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
+
+        <h2>🔍 Detailed Findings</h2>
+        <div id="findings-container"></div>
     </div>
+
+    <script>
+        async function loadData() {
+            try {
+                // Fetch progress summary
+                const progResponse = await fetch('../../../jobs/hp2236b_analysis/PROGRESS.md');
+                const progText = await progResponse.text();
+                
+                const pctMatch = progText.match(/종합 진척도: \[.*?\] (\d+%)/);
+                const pct = pctMatch ? pctMatch[1] : "0%";
+                document.getElementById('overall-pct').innerText = pct;
+                document.getElementById('progress-fill').style.width = pct;
+
+                const tableBody = document.querySelector('#groups-table tbody');
+                const rowRegex = /\| \*\*(G\d+:.*?)\*\* \| (\d+) \| (\d+) \| (.*?) \|/g;
+                let match;
+                while ((match = rowRegex.exec(progText)) !== null) {
+                    const row = `<tr><td class="group-name">${match[1]}</td><td>${match[2]}</td><td>${match[3]}</td><td class="status-cell">${match[4]}</td></tr>`;
+                    tableBody.innerHTML += row;
+                }
+
+                // Fetch detailed findings
+                const detailResponse = await fetch('data/analysis_details.json');
+                const details = await detailResponse.json();
+                const container = document.getElementById('findings-container');
+
+                Object.keys(details).forEach(group => {
+                    const groupSection = document.createElement('details');
+                    groupSection.innerHTML = `<summary>${group}</summary>`;
+                    
+                    Object.keys(details[group]).forEach(file => {
+                        groupSection.innerHTML += `<div class="finding"><span class="file-name">${file}</span>: ${details[group][file]}</div>`;
+                    });
+                    container.appendChild(groupSection);
+                });
+
+            } catch (err) { console.error('Dashboard Error:', err); }
+        }
+        loadData();
+    </script>
 </body>
 </html>
-    
