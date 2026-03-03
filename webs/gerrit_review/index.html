@@ -22,21 +22,53 @@
                 <span class="badge lgtm-badge">LGTM</span>
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>기존에 메인 SSID만 체크하던 방식에서 게스트 SSID를 포함한 모든 SSID 상태를 루프로 확인하도록 수정되었습니다. 이로 인해 메인 SSID가 꺼져 있더라도 게스트 WiFi가 활성화된 경우 LED가 정싁으로 점등됩니다. LGTM 입닸다.</pre></div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LGTM. 기존에 0번(Main) SSID만 체크하던 로직을 모든 SSID를 루프 돌며 확인하도록 심플하게 잘 수정되었습니다. 이로 인해 게스트 WiFi만 켜진 경우에도 LED가 정상 점등됩니다.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-197] [LEDCTRL] update operation mode initialization logic</div>
-                <span class="badge lgtm-badge">LGTM</span>
+                <div class="subject">[ARHT-333] Implement R_CPE7 Diagnostics - HTTP</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>성공적으로 분석되었습니다. 'prolinecmd opermode' 출력의 'ap:x:x:1' 형식을 검증하는 로직이 추가되어 AP 모드 초기화 시 LOS/PON LED 오동재 문제를 해결합니다. 네트워크 모드 파싱 로직이 견고하며 LGTM 입닸다.</pre></div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Ray</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### HTTP 진단 구현 분석
+
+**관찰 사항:**
+- `FalUtil_string_validate` 도입으로 URL 검증 강화.
+- `wa_build_rcpe7_device_payload` 분리로 가독성 향상.
+
+**우려 사항:**
+1. **Command Injection:** `system(cmd)`를 사용하여 curl을 호심합니다. `execl` 등을 사용하여 shell 메타 문자 해석 위험을 차단하는 것을 권장합니다.
+2. **Parsing Logic:** Domain 추출 시 `strstr` 및 fix offset을 사용하는데, `HTTP://`(대문자) 나 Port 번호가 포함된 경우 오동작 가능성이 있습니다.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-45] hal_unify, HalNetwork_getAllWanIndex()</div>
+                <div class="subject">[ARHT-182] Adjust boot sequence</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Yeongman Kim(김영만)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### Boot Sequence Reordering Analysis
+
+**장점:**
+- LAN/PON 우선 시작을 통해 네트워크 연결 성립 셍션을 앞당김.
+- dnsmasq 최적화 및 BOOT 플러그 제거로 DHCP 응답 셍션 단쵕.
+
+**리스크 및 제안:**
+1. **Dropbear/uhttpd (START=99):** 맨 마지막으로 밀려났습니다. 만약 부팅 중간에 항(Hang) 발생 시 SSH 접쇍이 안 되어 디버깅이 힘들 수 있습니다.
+2. **wait_lanup (START=23):** loop에 대한 timeout 설정이 없어 네트워크 초기화 실패 시 부팅 시퀀스 전체가 멈출 위험이 있습니다.</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-396][HP-2236B]Issue where WAN Service list defaults to "TR069_INTERNET" for clay</div>
                 <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>HalNetwork_getAllWanIndex 함수의 인자 구조를 간소화하고 MAX_WAN_INTF_NUMBER 상수를 내부적으로 처리하도록 수정하여 API 사용성을 향상시킴 패치입니다. 모든 호심 부의에 대한 변경이 일관되게 반영되었으며 LGTM 입닸다.</pre></div>
+            <div class="meta">Project: RG/frontend/clay | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LGTM. Clay 컴포넌트의 기본 서비스 순서를 정상화한 패치입니다.</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-396][HP-2236B]Issue where WAN Service list defaults to "TR069_INTERNET"</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LGTM. Backend와 Config 파일의 Service Type 명칭을 일관성 있게 수정했습니다.</pre></div>
         </div></div></div></body></html>
