@@ -1,4 +1,52 @@
 {
+  "I9a828afe7735d8bdee44e95ece9c65df69b5be8b_3": {
+    "key": "I9a828afe7735d8bdee44e95ece9c65df69b5be8b_3",
+    "number": "79730",
+    "subject": "[ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only scenario",
+    "project": "airoha/2025q3",
+    "owner": "Deuckyu Kim(김득규)",
+    "url": "http://git.humax-networks.com:8080/79730",
+    "patch_content": "commit ad98382cfadef755b139b9f5bc958f2c710950e4\nAuthor: dkkim <dkkim@humax-networks.com>\nDate:   Tue Mar 3 11:52:49 2026 +0900\n\n    [ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only\n    scenario\n    \n     - Ensure WiFi LED remains on when primary is disabled and guest is\n       enabled.\n    \n    Change-Id: I9a828afe7735d8bdee44e95ece9c65df69b5be8b\n\ndiff --git a/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c b/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\nindex abdfc7949..25a71b549 100755\n--- a/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\n+++ b/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\n@@ -114,10 +114,21 @@ static void check_wps_status(void)\n \n static void check_wifi_status(void)\n {\n-    bool enabled_2g = HalWifi_getSsidEntryEnabled(RADIO_INDEX_2G, 0);\n-    bool enabled_5g = HalWifi_getSsidEntryEnabled(RADIO_INDEX_5G, 0);\n-    int state_2g = enabled_2g ? WIFI_LED_GREEN_ON : WIFI_LED_OFF;\n-    int state_5g = enabled_5g ? WIFI_LED_GREEN_ON : WIFI_LED_OFF;\n+    bool enabled_2g = false;\n+    bool enabled_5g = false;\n+    int state_2g = 0;\n+    int state_5g = 0;\n+    int i;\n+\n+    for (i=0; i<MAX_NUM_SSID_2_4G; i++) {\n+        enabled_2g |= HalWifi_getSsidEntryEnabled(RADIO_INDEX_2G, i);\n+    }\n+    for (i=0; i<MAX_NUM_SSID_5G; i++) {\n+        enabled_5g |= HalWifi_getSsidEntryEnabled(RADIO_INDEX_5G, i);\n+    }\n+\n+    state_2g = enabled_2g ? WIFI_LED_GREEN_ON : WIFI_LED_OFF;\n+    state_5g = enabled_5g ? WIFI_LED_GREEN_ON : WIFI_LED_OFF;\n \n     if (g_wifi2g_state != state_2g) {\n         g_wifi2g_state = state_2g;\n",
+    "ps_num": "3",
+    "timestamp": 1772524781,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I632098872a279ee4b6aa74fe6b017c9047d0e0b6_5": {
+    "key": "I632098872a279ee4b6aa74fe6b017c9047d0e0b6_5",
+    "number": "79718",
+    "subject": "[ARHT-197] [LEDCTRL] update operation mode initialization logic",
+    "project": "airoha/2025q3",
+    "owner": "Deuckyu Kim(김득규)",
+    "url": "http://git.humax-networks.com:8080/79718",
+    "patch_content": "commit a37ac9f0a9325cf4038db84796b74a2ee1c777f4\nAuthor: dkkim <dkkim@humax-networks.com>\nDate:   Mon Mar 2 13:39:45 2026 +0900\n\n    [ARHT-197] [LEDCTRL] update operation mode initialization logic\n    \n     - Update the opermode setting logic in ledctrl_init()\n     - For AP mode, add validation logic to check the 'ap:x:x:1' format\n       from 'prolinecmd opermode' output\n     - Fix an issue where LOS/PON LEDs do not operate correctly during\n       transitions between AP and AUTO modes by ensuring proper\n       initialization of the operation mode.\n    \n    Change-Id: I632098872a279ee4b6aa74fe6b017c9047d0e0b6\n\ndiff --git a/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c b/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\nindex 7cebaefd3..abdfc7949 100755\n--- a/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\n+++ b/tclinux_phoenix/apps/hni/ledctrl/ledctrl.c\n@@ -428,7 +428,6 @@ static void cleanup(int sig)\n static void ledctrl_init(void)\n {\n     char buf[STR_LEN_128] = {0};\n-    char def_setting[STR_LEN_8] = {0};\n \n     // set to initial values\n     g_opermode.mode = OPERMODE_AUTO;\n@@ -449,8 +448,13 @@ static void ledctrl_init(void)\n                 break;\n             }\n             else if (strstr(buf, \"ap\")) {\n-                HalConfig_get(\"clay.opermode\", \"def_setting\", def_setting, sizeof(def_setting));\n-                if (atoi(def_setting) == 1) {\n+                int value_tagged, value_vendorid, value_keep;\n+                int ret = sscanf(buf, \"Value=ap:%d:%d:%d\", &value_tagged, &value_vendorid, &value_keep);\n+                if (ret == 3 && value_keep == 1) { // Value=ap:0:1:1\n+                    g_opermode.mode = OPERMODE_AP;\n+                    g_opermode.uplink = UPLINK_LAN1;\n+                }\n+                else if (ret == 2) {\n                     g_opermode.mode = OPERMODE_AUTO;\n                     g_opermode.uplink = UPLINK_PON;\n                 }\n",
+    "ps_num": "5",
+    "timestamp": 1772524734,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I5af69110df27a3ba3cf93a613b3b9dc00ca5439f_3": {
+    "number": "79713",
+    "subject": "[ARHT-212] Fix can not display LAN IP Address on Home page.",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Karina",
+    "url": "http://git.humax-networks.com:8080/79713",
+    "ps_num": "3",
+    "timestamp": 1772434755,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I7e2f9dec35f5d67baef00d4fbb47bc977e4d3967_1": {
+    "number": "79731",
+    "subject": "[HP-2236BVA-73] Fix TFTP download failure",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Dante",
+    "url": "http://git.humax-networks.com:8080/79731",
+    "ps_num": "1",
+    "timestamp": 1772518396,
+    "verdict": "LGTM",
+    "opinion": "The patch replaces a shell-script-based ebtables rule management with a direct C implementation in `hal_network.c`. It correctly adds a `RETURN` rule for the LAN IP in the `broute` table's `HNI-WAN` chains, which is essential for local services like TFTP to function correctly when port binding/brouting is active. The removal of the hotplug script and the backend script simplifies the system and makes the rule application more robust by tying it directly to the interface/WAN lifecycle in the HAL."
+  },
   "Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be_2": {
     "key": "Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be_2",
     "number": "79666",
@@ -12,33 +60,11 @@
     "verdict": "LGTM",
     "opinion": "LGTM"
   },
-  "I632098872a279ee4b6aa74fe6b017c9047d0e0b6_4": {
-    "number": "79718",
-    "subject": "[ARHT-197] [LEDCTRL] update operation mode initialization logic",
-    "project": "airoha/2025q3",
-    "owner": "Deuckyu Kim(\uae40\ub4dd\uaddc)",
-    "url": "http://git.humax-networks.com:8080/79718",
-    "ps_num": "4",
-    "timestamp": 1772507155,
-    "verdict": "LGTM",
-    "opinion": "LGTM"
-  },
-  "I9a828afe7735d8bdee44e95ece9c65df69b5be8b_2": {
-    "number": "79730",
-    "subject": "[ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only scenario",
-    "project": "airoha/2025q3",
-    "owner": "Deuckyu Kim(\uae40\ub4dd\uaddc)",
-    "url": "http://git.humax-networks.com:8080/79730",
-    "ps_num": "2",
-    "timestamp": 1772506801,
-    "verdict": "LGTM",
-    "opinion": "LGTM"
-  },
   "I83589bfcdeedbcf08b9c8707b43446af4f3a86b5_1": {
     "number": "79721",
     "subject": "[ARHT-45] hal_unify, HalNetwork_getAllWanIndex()",
     "project": "airoha/2025q3",
-    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "owner": "Chunsu Lim(임춘수)",
     "url": "http://git.humax-networks.com:8080/79721",
     "ps_num": "1",
     "timestamp": 1772505316,
@@ -49,7 +75,7 @@
     "number": "79720",
     "subject": "[ARHT-113] disable standalone_mode by default when booting",
     "project": "airoha/2025q3",
-    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "owner": "Chunsu Lim(임춘수)",
     "url": "http://git.humax-networks.com:8080/79720",
     "ps_num": "1",
     "timestamp": 1772498653,
@@ -67,22 +93,11 @@
     "verdict": "LGTM",
     "opinion": "LGTM"
   },
-  "I5af69110df27a3ba3cf93a613b3b9dc00ca5439f_3": {
-    "number": "79713",
-    "subject": "[ARHT-212] Fix can not display LAN IP Address on Home page.",
-    "project": "airoha/2025q3",
-    "owner": "[Marusys VINA] Karina",
-    "url": "http://git.humax-networks.com:8080/79713",
-    "ps_num": "3",
-    "timestamp": 1772434755,
-    "verdict": "LGTM",
-    "opinion": "LGTM"
-  },
   "I01859977030a54d1c85fc10519239b765a395df2_2": {
     "number": "79561",
     "subject": "[BIFROST-69] W25N02LV nand device",
     "project": "airoha/2025q1",
-    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "owner": "Chunsu Lim(임춘수)",
     "url": "http://git.humax-networks.com:8080/79561",
     "ps_num": "2",
     "timestamp": 1771645320,
