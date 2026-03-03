@@ -1,0 +1,92 @@
+{
+  "Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be_2": {
+    "key": "Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be_2",
+    "number": "79666",
+    "subject": "[ARHT-95] Update Backhaul interface name to the correct value",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Dante",
+    "url": "http://git.humax-networks.com:8080/79666",
+    "patch_content": "commit 245a326c634d107c6258115bf2e82219e2fc3674\nAuthor: hvn_hxtuan <hvn_hxtuan@humax-networks.com>\nDate:   Thu Feb 26 09:40:40 2026 +0000\n\n    [ARHT-95] Update Backhaul interface name to the correct value\n    \n    Change-Id: Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be\n\ndiff --git a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h\nindex 7c34770ef..eb209d0d0 100644\n--- a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h\n+++ b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h\n@@ -565,7 +565,7 @@ void HalNetwork_updateWan6Autoconf(int wanID);\n int HalNetwork_updateDNSRelay(void);\n int HalNetwork_updateBindPort(bool isInterfaceUp, int wanId, bool isIpv6);\n int HalNetwork_bootBindPort(void);\n-int HalNetwork_updateBindPortDefaultRoute(char *interface, int action);\n+int HalNetwork_updateBackHaulBindPort(char *interface, int action);\n void HalNetwork_lanIsolationUpdate(void);\n void HalNetwork_lanIsolationInit(void);\n int HalUtils_proveLanPorts(void);\ndiff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c\nindex fe31cf87b..3ad3e8c8a 100644\n--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c\n+++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c\n@@ -6296,7 +6296,7 @@ int HalNetwork_bootBindPort(void)\n     int sections[STR_LEN_16] = {0};\n     int section_num = 0;\n \n-    HalNetwork_updateBindPortDefaultRoute(NULL, HAL_WAN_ACTION_ADD);\n+    HalNetwork_updateBackHaulBindPort(NULL, HAL_WAN_ACTION_ADD);\n \n     if (HalConfig_query(CONF_WAN, TYPE_ENTRY, sections, STR_LEN_16, &section_num) != HAL_SUCCESS) {\n         return HAL_FAILURE;\n@@ -6369,12 +6369,12 @@ end:\n     return HAL_SUCCESS;\n }\n \n-int HalNetwork_updateBindPortDefaultRoute(char *interface, int action)\n+int HalNetwork_updateBackHaulBindPort(char *interface, int action)\n {\n     int wanId = -1;\n-    const char *mapSSID[] = {\n-        \"ra3\",\n-        \"rai3\"\n+    const char *mapSSID[] = { // Backhaul Interface\n+        \"ra4\",\n+        \"rai4\"\n     };\n     const bool ports_default[2] = {true, true};\n     int mark = 0;\ndiff --git a/tclinux_phoenix/apps/hni/ubusmon/event.c b/tclinux_phoenix/apps/hni/ubusmon/event.c\nindex 6fc8d5103..b2590c51e 100644\n--- a/tclinux_phoenix/apps/hni/ubusmon/event.c\n+++ b/tclinux_phoenix/apps/hni/ubusmon/event.c\n@@ -330,7 +330,7 @@ static void lan_route6_event_handler(char *action, char *interface)\n         return;\n \n     if (is_wan_default_route_change_event(false, action) && strcmp(interface, \"NO_DEFAULT\") != 0) {\n-        HalNetwork_updateBindPortDefaultRoute(interface, HAL_WAN_ACTION_MODIFY);\n+        HalNetwork_updateBackHaulBindPort(interface, HAL_WAN_ACTION_MODIFY);\n     }\n }\n \n",
+    "ps_num": "2",
+    "timestamp": 1772510178,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I632098872a279ee4b6aa74fe6b017c9047d0e0b6_4": {
+    "number": "79718",
+    "subject": "[ARHT-197] [LEDCTRL] update operation mode initialization logic",
+    "project": "airoha/2025q3",
+    "owner": "Deuckyu Kim(\uae40\ub4dd\uaddc)",
+    "url": "http://git.humax-networks.com:8080/79718",
+    "ps_num": "4",
+    "timestamp": 1772507155,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I9a828afe7735d8bdee44e95ece9c65df69b5be8b_2": {
+    "number": "79730",
+    "subject": "[ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only scenario",
+    "project": "airoha/2025q3",
+    "owner": "Deuckyu Kim(\uae40\ub4dd\uaddc)",
+    "url": "http://git.humax-networks.com:8080/79730",
+    "ps_num": "2",
+    "timestamp": 1772506801,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I83589bfcdeedbcf08b9c8707b43446af4f3a86b5_1": {
+    "number": "79721",
+    "subject": "[ARHT-45] hal_unify, HalNetwork_getAllWanIndex()",
+    "project": "airoha/2025q3",
+    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "url": "http://git.humax-networks.com:8080/79721",
+    "ps_num": "1",
+    "timestamp": 1772505316,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I391d2ec07528750aa58fa2446d094c83cb8bccac_1": {
+    "number": "79720",
+    "subject": "[ARHT-113] disable standalone_mode by default when booting",
+    "project": "airoha/2025q3",
+    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "url": "http://git.humax-networks.com:8080/79720",
+    "ps_num": "1",
+    "timestamp": 1772498653,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "Ie924f86b3509b424f448d94ba229edee197d5366_2": {
+    "number": "79725",
+    "subject": "[ARHT-222] Implement P_CPE22 for 3rd",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Dante",
+    "url": "http://git.humax-networks.com:8080/79725",
+    "ps_num": "2",
+    "timestamp": 1772464549,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I5af69110df27a3ba3cf93a613b3b9dc00ca5439f_3": {
+    "number": "79713",
+    "subject": "[ARHT-212] Fix can not display LAN IP Address on Home page.",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Karina",
+    "url": "http://git.humax-networks.com:8080/79713",
+    "ps_num": "3",
+    "timestamp": 1772434755,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I01859977030a54d1c85fc10519239b765a395df2_2": {
+    "number": "79561",
+    "subject": "[BIFROST-69] W25N02LV nand device",
+    "project": "airoha/2025q1",
+    "owner": "Chunsu Lim(\uc784\ucd98\uc218)",
+    "url": "http://git.humax-networks.com:8080/79561",
+    "ps_num": "2",
+    "timestamp": 1771645320,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  }
+}
