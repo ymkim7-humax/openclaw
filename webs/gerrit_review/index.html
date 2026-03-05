@@ -18,86 +18,54 @@
         <div id="reviews-container">
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-104] System Log: Add some logs for covering all log levels</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-343] remove unnecessary repeated log</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-386][HPM-2272B][AIS] FG550 DialApp Porting</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[BIFROST-92] Version up 0.2.20</div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Standard version bump to 0.2.20 and DRAM limit adjustment to 512M for HP2272B models.</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-325] meshsync: Sync firmware</div>
+                <div class="subject">[ARHT-325] meshsync:</div>
                 <span class="badge lgtm-badge">LGTM</span>
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Great refactor. Abstracting the partition logic into `blapi` simplifies `hal_other.c` significantly and makes the firmware generation process more robust.</pre></div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Code is clean and follows the project's refactoring patterns (removing redundant `
+` in logs, using `hmx_sleep`, and simplifying sync logic).</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-210] P_CPE10 support SUB's client information</div>
+                <div class="subject">[ARHT-197] fix AP mode LOS/PON led behavior (reboot)</div>
                 <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details>
-<summary>Detailed Feedback on wa_publish_api.cpp</summary>
+            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details><summary>Detailed Feedback</summary>
 
-### Potential issue in `wa_fill_bandmode` logic
+### Critical Logic Issue
+In `ledctrl.c`, if `HalNetwork_getClayOpermodeDefSetting()` returns `false`, you call `HalNetwork_getOperationMode(&g_opermode)` and then **immediately return** from `ledctrl_init`.
 
-The use of `strstr` to detect WiFi modes might lead to false positives. For example:
-```cpp
-if (strstr(bandMode, "b")) {
-    bandmodes.addArrayItem<const char*>("802.11b");
+```c
+if (!HalNetwork_getClayOpermodeDefSetting()) {
+    HalNetwork_getOperationMode(&g_opermode);
+    return;
 }
 ```
-If `bandMode` is `"be"` (802.11be/WiFi 7), `strstr(bandMode, "b")` will return true, incorrectly adding `802.11b` to the supported modes. 
 
-Consider using more specific checks or ensuring `bandMode` doesn't contain ambiguous substrings.
+This bypasses `ledctrl_timer_init()` and other critical initialization steps at the end of the function (which were originally reached after the `if/else` block). This will likely cause the LED control service to fail to start or function correctly.
 
-### Type consistency
-The patch changes many `unsigned int` usages to `int` when calling `pWifiDevicesInfo->set<int>(...)`. While this matches the library's expectation, ensure that values like packet counts (which can be very large) won't overflow if treated as signed 32-bit integers in downstream consumers.
-
-### Interface path mapping
-`wa_updateEthernetIfToPath` depends on `ethernetMap`. Ensure this map is correctly populated for all supported hardware revisions.
+### Suggestion
+Use an `if/else` block instead of an early return to ensure the rest of the initialization logic runs.
 
 </details></pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only scenario</div>
-                <span class="badge lgtm-badge">LGTM</span>
+                <div class="subject">[ARHT-55] Optimize: Combine multiple LED control commands into a single execution</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Correctly fixes the WiFi LED behavior. By checking all SSID indices instead of just the primary (0), the LED will correctly reflect the status when only guest networks are active.</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-95] Update Backhaul interface name to the correct value</div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Updated backhaul interface names to `ra4/rai4` and renamed the bind port function to better reflect its purpose (Backhaul Bind Port).</pre></div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details><summary>Detailed Feedback</summary>
+
+### Potential Syntax Errors
+1. **Case `POWER_LED_RED_OFF`**: There is a missing space between the semicolon and the next command: `/bin/echo none > %s;/bin/echo 0 > %s`. While functional in some shells, it's inconsistent with other parts of your patch.
+2. **Case `WIFI_LED_GREEN_BLINK`**: You used a **comma** instead of a **semicolon** between the last two commands:
+   `"/bin/echo timer > %s; /bin/echo %d > %s, /bin/echo %d > %s"`.
+   This will cause the command to fail.
+
+### Recommendation
+Double-check all `HalUtils_cmdExec` strings for proper shell syntax (semicolons and spaces).
+
+</details></pre></div>
         </div></div></div></body></html>
