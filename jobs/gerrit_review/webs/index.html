@@ -18,19 +18,43 @@
         <div id="reviews-container">
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79762' target='_blank'>[ARHT-343] remove unnecessary repeated log</a></div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+                <div class="subject"><a href='http://git.humax-networks.com:8080/79666' target='_blank'>[ARHT-95] Update Backhaul interface name to the correct value</a></div>
+                <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Proper refactoring of the backhaul interface naming logic. Using macros for interface names is more maintainable than hardcoded values like "ra3"/"rai3".</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79763' target='_blank'>[ARHT-386][HPM-2272B][AIS] FG550 DialApp Porting</a></div>
+                <div class="subject"><a href='http://git.humax-networks.com:8080/79756' target='_blank'>[HP2236BVA-64] Fix error 500 displays when creating bridge WAN</a></div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Good error handling improvement. Mapping FAL_UNPROC_ENT to API_BAD_REQUEST (400) correctly reflects client-side input errors when creating/changing WAN, preventing unnecessary 500 Internal Server Errors.</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject"><a href='http://git.humax-networks.com:8080/79723' target='_blank'>[ARHT-108] Dual uplink: Add Connection Type (GPON line)</a></div>
                 <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>The patch introduces HalNetwork_getVendorList and uses it in NetworkUplinkGet, but the prototype for this function is missing from hal_network.h. Additionally, the vendor list is hardcoded to a count of 3 with static names ("Connection 1", etc.) in the API layer, which might be better served by a more dynamic approach or at least defined constants. There is also a pre-existing typo HalUltils_getPIDByName in the context of hal_network.c.
+
+<details>
+<summary>Detailed Feedback</summary>
+
+- **Missing Prototype**: `HalNetwork_getVendorList` is used in `FalNetwork.cpp` but not declared in `hal_network.h`.
+- **Hardcoded Strings**: "Connection 1", "Connection 2", and "Connection 3" are hardcoded in the API response. These should ideally come from the HAL or be defined as macros.
+- **Consistency**: The `vendorId` is added to `HalNetwork_dualuplink_t` but ensure all initialization paths for this struct are covered.
+</details></pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject"><a href='http://git.humax-networks.com:8080/79657' target='_blank'>[ARHT-104] System Log: Add some logs for covering all log levels</a></div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Adding logs for various levels (warn, crit, alert, emerg) as requested. Looks correct and consistent with existing logging patterns.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
@@ -47,49 +71,4 @@
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
             <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Great refactor. Abstracting the partition logic into `blapi` simplifies `hal_other.c` significantly and makes the firmware generation process more robust.</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79712' target='_blank'>[ARHT-210] P_CPE10 support SUB's client information</a></div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details>
-<summary>Detailed Feedback on wa_publish_api.cpp</summary>
-
-### Potential issue in `wa_fill_bandmode` logic
-
-The use of `strstr` to detect WiFi modes might lead to false positives. For example:
-```cpp
-if (strstr(bandMode, "b")) {
-    bandmodes.addArrayItem<const char*>("802.11b");
-}
-```
-If `bandMode` is `"be"` (802.11be/WiFi 7), `strstr(bandMode, "b")` will return true, incorrectly adding `802.11b` to the supported modes. 
-
-Consider using more specific checks or ensuring `bandMode` doesn't contain ambiguous substrings.
-
-### Type consistency
-The patch changes many `unsigned int` usages to `int` when calling `pWifiDevicesInfo->set<int>(...)`. While this matches the library's expectation, ensure that values like packet counts (which can be very large) won't overflow if treated as signed 32-bit integers in downstream consumers.
-
-### Interface path mapping
-`wa_updateEthernetIfToPath` depends on `ethernetMap`. Ensure this map is correctly populated for all supported hardware revisions.
-
-</details></pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79730' target='_blank'>[ARHT-187] [HP2236BVA-76] [LED] Fix WiFi LED behavior for guest-only scenario</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Correctly fixes the WiFi LED behavior. By checking all SSID indices instead of just the primary (0), the LED will correctly reflect the status when only guest networks are active.</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79666' target='_blank'>[ARHT-95] Update Backhaul interface name to the correct value</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Updated backhaul interface names to `ra4/rai4` and renamed the bind port function to better reflect its purpose (Backhaul Bind Port).</pre></div>
         </div></div></div></body></html>
