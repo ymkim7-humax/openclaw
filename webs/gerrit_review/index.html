@@ -18,12 +18,67 @@
         <div id="reviews-container">
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-325] meshsync:</div>
-                <span class="badge lgtm-badge">LGTM</span>
+                <div class="subject">[ARHT-55] Optimize: Combine multiple LED control commands into a single execution</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-108] Dual uplink: Add Connection Type (GPON line)</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Code is clean and follows the project's refactoring patterns (removing redundant `
-` in logs, using `hmx_sleep`, and simplifying sync logic).</pre></div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-325] meshsync:</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-325] meshsync: Sync firmware</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-95] Update Backhaul interface name to the correct value</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-104] System Log: Add some logs for covering all log levels</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-64] Fix error 500 displays when creating bridge WAN</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
@@ -31,41 +86,5 @@
                 <span class="badge detail-badge">DETAILED FEEDBACK</span>
             </div>
             <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details><summary>Detailed Feedback</summary>
-
-### Critical Logic Issue
-In `ledctrl.c`, if `HalNetwork_getClayOpermodeDefSetting()` returns `false`, you call `HalNetwork_getOperationMode(&g_opermode)` and then **immediately return** from `ledctrl_init`.
-
-```c
-if (!HalNetwork_getClayOpermodeDefSetting()) {
-    HalNetwork_getOperationMode(&g_opermode);
-    return;
-}
-```
-
-This bypasses `ledctrl_timer_init()` and other critical initialization steps at the end of the function (which were originally reached after the `if/else` block). This will likely cause the LED control service to fail to start or function correctly.
-
-### Suggestion
-Use an `if/else` block instead of an early return to ensure the rest of the initialization logic runs.
-
-</details></pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-55] Optimize: Combine multiple LED control commands into a single execution</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre><details><summary>Detailed Feedback</summary>
-
-### Potential Syntax Errors
-1. **Case `POWER_LED_RED_OFF`**: There is a missing space between the semicolon and the next command: `/bin/echo none > %s;/bin/echo 0 > %s`. While functional in some shells, it's inconsistent with other parts of your patch.
-2. **Case `WIFI_LED_GREEN_BLINK`**: You used a **comma** instead of a **semicolon** between the last two commands:
-   `"/bin/echo timer > %s; /bin/echo %d > %s, /bin/echo %d > %s"`.
-   This will cause the command to fail.
-
-### Recommendation
-Double-check all `HalUtils_cmdExec` strings for proper shell syntax (semicolons and spaces).
-
-</details></pre></div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
         </div></div></div></body></html>
