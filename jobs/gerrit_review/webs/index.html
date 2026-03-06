@@ -4,41 +4,564 @@
         .review-card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; margin-bottom: 20px; }
         .badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
         .lgtm-badge { background: #065f46; color: #34d399; }
-        .detail-badge { background: #1e3a8a; color: #93c5fd; }
+        .cr-badge { background: #7f1d1d; color: #fecaca; }
         .subject { font-size: 1.25rem; font-weight: bold; color: #f8fafc; }
-        .meta { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
         pre { background: #000; padding: 15px; border-radius: 6px; overflow-x: auto; color: #e2e8f0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
         a { color: #3b82f6; text-decoration: none; }
-        a:hover { text-decoration: underline; }
     </style>
     </head><body>
-    <div style="max-width: 1000px; margin: auto;">
-        <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
-        <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container">
+    <h1 style="text-align:center;">Gerrit Review Dashboard</h1>
+    <div id="reviews-container">
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79666' target='_blank'>[ARHT-95] Update Backhaul interface name to the correct value</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Proper refactoring of the backhaul interface naming logic. Using macros for interface names is more maintainable than hardcoded values like "ra3"/"rai3".</pre></div>
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[ARHT-95] Update Backhaul interface name to the correct value</div>
+            <p>Owner: [Marusys VINA] Dante | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79666" target="_blank">View on Gerrit</a></p>
+            <div>Proper refactoring of the backhaul interface naming logic. Using macros for interface names is more maintainable than hardcoded values like "ra3"/"rai3".</div>
+            <details><summary>Patch Content</summary><pre>commit 709c400b52063977cb4b8a751578f39e9812ed48
+Author: hvn_hxtuan <hvn_hxtuan@humax-networks.com>
+Date:   Thu Feb 26 09:40:40 2026 +0000
+
+    [ARHT-95] Update Backhaul interface name to the correct value
+    
+    Change-Id: Ibaa77bcf1b6768a05eb18f4fa69a0b6a776170be
+
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
+index 0bbfac8cb9..07f1ab4e5e 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
++++ b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
+@@ -565,7 +565,7 @@ void HalNetwork_updateWan6Autoconf(int wanID);
+ int HalNetwork_updateDNSRelay(void);
+ int HalNetwork_updateBindPort(bool isInterfaceUp, int wanId, bool isIpv6);
+ int HalNetwork_bootBindPort(void);
+-int HalNetwork_updateBindPortDefaultRoute(char *interface, int action);
++int HalNetwork_updateBackHaulBindPort(char *interface, int action);
+ void HalNetwork_lanIsolationUpdate(void);
+ void HalNetwork_lanIsolationInit(void);
+ int HalUtils_proveLanPorts(void);
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+index 87836e43ce..5fde068f3a 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
++++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+@@ -9,6 +9,9 @@
+ #include "hal_network.h"
+ #include "hal_pon.h"
+ 
++#define STR_HELPER(x) #x
++#define STR(x) STR_HELPER(x)
++
+ #define IFACE_V6_REQ_ADDR_TRY       "try"
+ #define IFACE_V6_REQ_ADDR_NONE      "none"
+ #define IFACE_V6_REQ_ADDR_FORCE     "force"
+@@ -6308,7 +6311,7 @@ int HalNetwork_bootBindPort(void)
+     int sections[STR_LEN_16] = {0};
+     int section_num = 0;
+ 
+-    HalNetwork_updateBindPortDefaultRoute(NULL, HAL_WAN_ACTION_ADD);
++    HalNetwork_updateBackHaulBindPort(NULL, HAL_WAN_ACTION_ADD);
+ 
+     if (HalConfig_query(CONF_WAN, TYPE_ENTRY, sections, STR_LEN_16, &section_num) != HAL_SUCCESS) {
+         return HAL_FAILURE;
+@@ -6381,12 +6384,12 @@ end:
+     return HAL_SUCCESS;
+ }
+ 
+-int HalNetwork_updateBindPortDefaultRoute(char *interface, int action)
++int HalNetwork_updateBackHaulBindPort(char *interface, int action)
+ {
+     int wanId = -1;
+-    const char *mapSSID[] = {
+-        "ra3",
+-        "rai3"
++    const char *mapSSID[] = { // Backhaul Interface
++        IFACE_2G_PREFIX_NAME STR(WIFI_BACKHAULT_IDX),
++        IFACE_5G_PREFIX_NAME STR(WIFI_BACKHAULT_IDX)
+     };
+     const bool ports_default[2] = {true, true};
+     int mark = 0;
+diff --git a/tclinux_phoenix/apps/hni/ubusmon/event.c b/tclinux_phoenix/apps/hni/ubusmon/event.c
+index 6fc8d51039..b2590c51e1 100644
+--- a/tclinux_phoenix/apps/hni/ubusmon/event.c
++++ b/tclinux_phoenix/apps/hni/ubusmon/event.c
+@@ -330,7 +330,7 @@ static void lan_route6_event_handler(char *action, char *interface)
+         return;
+ 
+     if (is_wan_default_route_change_event(false, action) && strcmp(interface, "NO_DEFAULT") != 0) {
+-        HalNetwork_updateBindPortDefaultRoute(interface, HAL_WAN_ACTION_MODIFY);
++        HalNetwork_updateBackHaulBindPort(interface, HAL_WAN_ACTION_MODIFY);
+     }
+ }
+ 
+</pre></details>
         </div>
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79756' target='_blank'>[HP2236BVA-64] Fix error 500 displays when creating bridge WAN</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Good error handling improvement. Mapping FAL_UNPROC_ENT to API_BAD_REQUEST (400) correctly reflects client-side input errors when creating/changing WAN, preventing unnecessary 500 Internal Server Errors.</pre></div>
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[ARHT-325] meshsync: Sync firmware</div>
+            <p>Owner: [Marusys VINA] Jack | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79761" target="_blank">View on Gerrit</a></p>
+            <div>Great refactor. Abstracting the partition logic into `blapi` simplifies `hal_other.c` significantly and makes the firmware generation process more robust.</div>
+            <details><summary>Patch Content</summary><pre>commit b75e2857fb8ed999768089b1598f008ce02dba1b
+Author: hvn_jack <hvn_jack@humax-networks.com>
+Date:   Wed Mar 4 03:48:01 2026 +0000
+
+    [ARHT-325] meshsync: Sync firmware
+    
+    Change-Id: Ib57291281c463f3f967cb013c3d31a62c879e5ba
+
+diff --git a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.c b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.c
+index a225a64c1..cb15e137f 100755
+--- a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.c
++++ b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.c
+@@ -3152,6 +3152,60 @@ int blapi_system_image_check(char *file)
+ 	return 0;
+ }
+ 
++#if defined(HNI_SUPPORT_COMMON)
++int blapi_system_get_partition_dev(char boot_flag, char *kernel_dev, size_t kernel_len, char *rootfs_dev, size_t rootfs_len)
++{
++	if (kernel_dev)
++		snprintf(kernel_dev, kernel_len, "%s", (boot_flag == 0) ? "/dev/mtd1" : "/dev/mtd3"); // kernel - kernel_slave
++	if (rootfs_dev)
++		snprintf(rootfs_dev, rootfs_len, "%s", (boot_flag == 0) ? "/dev/mtd2" : "/dev/mtd4"); // filesystem - filesystem_slave
++
++	return 0;
++}
++
++int blapi_system_get_kernel_len(void)
++{
++	return IMAGE_SPLIT_OFFSET;
++}
++
++int blapi_system_get_rootfs_len(char boot_flag)
++{
++	int fd = -1;
++	ssize_t read_size;
++	unsigned int data = 0;
++	int rootfs_len = 0;
++	char kernel_dev[16] = {0};
++
++	blapi_system_get_partition_dev(boot_flag, kernel_dev, sizeof(kernel_dev), NULL, 0);
++
++	if((fd = open(kernel_dev, O_RDONLY)) == -1)
++	{
++		ecnt_blapi_printf("open file %s fail\n", kernel_dev);
++		return -1;
++	}
++
++	if(lseek(fd, IMAGE_SPLIT_OFFSET - 8, SEEK_SET) == (off_t) - 1)
++	{
++		ecnt_blapi_printf("seek in %s fail\n", kernel_dev);
++		close(fd);
++		return -1;
++	}
++
++	read_size = read(fd, &data, sizeof(data));
++	if(read_size != sizeof(data))
++	{
++		ecnt_blapi_printf("fail -- only read %zd\n", read_size);
++		close(fd);
++		return -1;
++	}
++
++	rootfs_len = (int)htonl(data);
++
++	close(fd);
++	return rootfs_len;
++}
++#endif
++
+ int blapi_system_get_image_version(char *file, char *buf, size_t size)
+ {
+ 	int fd = -1;
+diff --git a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.h b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.h
+index 1ce8047f6..0d186fa9d 100644
+--- a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.h
++++ b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system.h
+@@ -1073,6 +1073,12 @@ int blapi_system_get_crc_verify_result(void);
+ 
+ int blapi_system_image_check(char *file);
+ int blapi_system_get_image_version(char *file, char *buf, size_t size);
++
++#if defined(HNI_SUPPORT_COMMON)
++int blapi_system_get_partition_dev(char boot_flag, char *kernel_dev, size_t kernel_len, char *rootfs_dev, size_t rootfs_len);
++int blapi_system_get_kernel_len(void);
++int blapi_system_get_rootfs_len(char boot_flag);
++#endif
+ /**
+  * \brief This function is used to set wan mode
+  *
+diff --git a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.c b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.c
+index f9f9ab32f..b32c50db6 100644
+--- a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.c
++++ b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.c
+@@ -131,6 +131,9 @@ static const cmds_t blapi_system_cmd[] =
+ 	{"get_crc",do_blapi_system_get_crc,0,0,NULL},
+ 	{"image_check",do_blapi_system_image_check,0,0,NULL},
+ 	{"get_image_version",do_blapi_system_get_image_version,0,0,NULL},
++#if defined(HNI_SUPPORT_COMMON)
++	{"get_image_len",do_blapi_system_get_image_len,0,0,NULL},
++#endif
+ 	{NULL,NULL,0,0,NULL}
+ };
+ 
+@@ -732,6 +735,32 @@ int do_blapi_system_get_image_version(int argc, char *argv[], void *p)
+ 	return -1;			
+ }
+ 
++#if defined(HNI_SUPPORT_COMMON)
++int do_blapi_system_get_image_len(int argc, char *argv[], void *p)
++{
++	int kernel_len = -1;
++	int rootfs_len = -1;
++	char boot_flag = -1;
++
++	if(argc != 1)
++	{
++		ecnt_blapi_printf("\r\n Usage: blapi_cmd system get_image_len\n");
++		return -1;
++	}
++
++	blapi_system_get_current_boot_flag(&boot_flag);
++
++	kernel_len = blapi_system_get_kernel_len();
++	rootfs_len = blapi_system_get_rootfs_len(boot_flag);
++
++	if (kernel_len <= 0 || rootfs_len <= 0)
++		return -1;
++
++	printf("[kernel: %d] - [rootfs: %d] - [total: %d]\n", kernel_len, rootfs_len, kernel_len + rootfs_len);
++	return 0;
++}
++#endif
++
+ int do_blapi_system_client_command(int argc, char *argv[], void *p)
+ {
+ #if defined(TCSUPPORT_SISM_HOST)
+diff --git a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.h b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.h
+index 585663c1a..629151de6 100644
+--- a/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.h
++++ b/tclinux_phoenix/app_bsp/private/API/ecnt_blapi/system/blapi_system_cmd.h
+@@ -105,6 +105,9 @@ int do_blapi_system_get_spf_linkup(int argc, char *argv[], void *p);
+ int do_blapi_system_get_crc(int argc, char *argv[], void *p);
+ int do_blapi_system_image_check(int argc, char *argv[], void *p);
+ int do_blapi_system_get_image_version(int argc, char *argv[], void *p);
++#if defined(HNI_SUPPORT_COMMON)
++int do_blapi_system_get_image_len(int argc, char *argv[], void *p);
++#endif
+ int do_blapi_system_client_command(int argc, char *argv[], void *p);
+ int do_blapi_system_prepare_interface(int argc, char *argv[], void *p);
+ int do_blapi_system_del_prepared_interface(int argc, char *argv[], void *p);
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/include/hal_other.h b/tclinux_phoenix/apps/hni/hal_unify/include/hal_other.h
+index 6894e7da8..4e4326bc6 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/include/hal_other.h
++++ b/tclinux_phoenix/apps/hni/hal_unify/include/hal_other.h
+@@ -158,7 +158,7 @@ struct fw_info_t {
+ /*###################################################################
+  # Description:     function
+  ####################################################################*/
+-int Hal_getCurrentBootFlag(char *boot_flag);
++int Hal_getCurrentBootFlag(char *pBootFlag);
+ int Hal_startUpgradeFW(const char *firmware_file);
+ int Hal_getFirmwareSize(void);
+ int Hal_genFirmware(const char *firmware_file, size_t *fw_size);
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_mesh.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_mesh.c
+index 30a242394..fca3f432e 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_mesh.c
++++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_mesh.c
+@@ -74,26 +74,15 @@ static void set_bh_mlo_mode(void)
+ int HalMesh_getMeshRole(void)
+ {
+     HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter");
+-    char buffer[STR_LEN_8] = {0};
+-    int mapMode5g = 0;
+-    int mapMode2g = 0;
++    int mode = HAL_EASYMESH_DISABLE;
+ 
+-    if (HalConfig_get(CONFIG_WIRELESS_5G_COMMON, ATTR_MAP_MODE, buffer, sizeof(buffer)) == HAL_SUCCESS)
+-    {
+-        mapMode5g = atoi(buffer);
+-    }
++    if (HalConfig_getIntValue(CONFIG_MAPD_CFG, OPTION_MODE, &mode) != HAL_SUCCESS)
++        return HAL_EASYMESH_DISABLE;
+ 
+-    if (HalConfig_get(CONFIG_WIRELESS_2G_COMMON, ATTR_MAP_MODE, buffer, sizeof(buffer)) == HAL_SUCCESS)
+-    {
+-        mapMode2g = atoi(buffer);
+-    }
+-
+-    if (mapMode5g && mapMode2g)
+-    {
+-        return HAL_EASYMESH_CONTROLLER;
+-    }
++    if (mode != HAL_EASYMESH_CONTROLLER && mode != HAL_EASYMESH_AGENT)
++        return HAL_EASYMESH_DISABLE;
+ 
+-    return HAL_EASYMESH_DISABLE;
++    return mode;
+ }
+ 
+ int HalMesh_setMeshRole(int mesh_role)
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_other.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_other.c
+index da6c2f13f..a59e37e4c 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_other.c
++++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_other.c
+@@ -13,18 +13,26 @@
+ #include "hal_system_utils.h"
+ #include "blapi_system.h"
+ 
+-int Hal_getCurrentBootFlag(char *boot_flag)
++int Hal_getCurrentBootFlag(char *pBootFlag)
+ {
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter\n");
+-    if (!boot_flag)
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter");
++    static char bootFlag = -1;
++    if (bootFlag < 0) {
++        if (blapi_system_get_current_boot_flag(&bootFlag) < 0)
++            return HAL_FAILURE;
++    }
++
++    if (!pBootFlag)
+         return HAL_FAILURE;
+ 
++    *pBootFlag = bootFlag;
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "[bootFlag = %d]", bootFlag);
+     return HAL_SUCCESS;
+ }
+ 
+ int Hal_startUpgradeFW(const char *firmware_file)
+ {
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter\n");
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter");
+     char cmd[STR_LEN_64] = {0};
+ 
+     if (!firmware_file)
+@@ -35,148 +43,45 @@ int Hal_startUpgradeFW(const char *firmware_file)
+     return HalGateway_doFirmwareUpdate();
+ }
+ 
+-static int get_mtd_name(char *mtd_name, size_t mtd_len)
+-{
+-    static char bootFlag = -1;
+-    if (!mtd_name)
+-        return -1;
+-
+-    if (bootFlag < 0) {
+-        if (blapi_system_get_current_boot_flag(&bootFlag) < 0)
+-            return -1;
+-    }
+-
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "bootFlag = %d\n", bootFlag);
+-    snprintf(mtd_name, mtd_len, "%s", (bootFlag == 0) ? "tclinux" : "tclinux_slave");
+-    return 0;
+-}
+-
+-static int get_mtd_dev_by_name(const char *mtd_name, char *dev_name, size_t dev_len)
+-{
+-    char line[STR_LEN_64] = {0};
+-    char tmp_dev[STR_LEN_16] = {0}, tmp_mtd[STR_LEN_16] = {0};
+-
+-    if (!mtd_name || !dev_name)
+-        return -1;
+-
+-    FILE *fp = fopen("/proc/mtd", "r");
+-    if (!fp) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "fopen failed\n");
+-        return -1;
+-    }
+-
+-    while (fgets(line, sizeof(line), fp)) {
+-        if (sscanf(line, "%[^:]: %*s %*s \"%[^\"]\"", tmp_dev, tmp_mtd) == 2) {
+-            if (strcmp(tmp_mtd, mtd_name) == 0) {
+-                fclose(fp);
+-                snprintf(dev_name, dev_len, "/dev/%s", tmp_dev);
+-                return 0;
+-            }
+-        }
+-    }
+-
+-    fclose(fp);
+-    return -1;  // not found
+-}
+-
+-static int get_FIP_header_len(const char *dev_name)
+-{
+-    char cmd[STR_LEN_128] = {0};
+-    char buf[STR_LEN_32] = {0};
+-    FILE *fp = NULL;
+-
+-    if (!dev_name)
+-        return -1;
+-
+-    snprintf(cmd, sizeof(cmd), "/userfs/bin/blapi_cmd system check_secure_tclinux 0 %s | awk '{print $9}'", dev_name);
+-    fp = popen(cmd, "r");
+-    if (!fp)
+-        return -1;
+-
+-    fgets(buf, sizeof(buf), fp);
+-    buf[strcspn(buf, "\n")] = '\0';
+-
+-    pclose(fp);
+-    return atoi(buf);
+-}
+-
+ int Hal_getFirmwareSize(void)
+ {
+-    #define FW_ALIGNMENT    1024
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter\n");
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter");
+     static int fw_size = -1;
+-
+-    char mtd_name[STR_LEN_16] = {0};
+-    char dev_name[STR_LEN_32] = {0};
+-    int FIP_header_len = 0;
+-    struct trx_header trx;
+-    int fd = -1;
+-    size_t total_len = 0;
++    char boot_flag = -1;
++    int kernel_len = -1;
++    int rootfs_len = 0;
+ 
+     /* 0. Just get fw size 1 time only */
+     if (fw_size > 0)
+         return fw_size;
+ 
+-    /* 1. Get mtd name */
+-    if (get_mtd_name(mtd_name, sizeof(mtd_name)) < 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot get mtd name\n");
+-        return -1;
+-    }
+-
+-    /* 2. Get device name */
+-    if (get_mtd_dev_by_name(mtd_name, dev_name, sizeof(dev_name)) < 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot find dev_name of %s\n", mtd_name);
+-        return -1;
+-    }
+-
+-    /* 3. Get FIP header length */
+-    if ((FIP_header_len = get_FIP_header_len(dev_name)) <= 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot get FIP header length in %s\n", dev_name);
+-        return -1;
+-    }
+-
+-    /* 4. Get TRX header */
+-    memset(&trx, 0, sizeof(trx));
+-    fd = open(dev_name, O_RDONLY);
+-    if (fd < 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot open file %s\n", dev_name);
++    if (Hal_getCurrentBootFlag(&boot_flag) != HAL_SUCCESS)
+         return -1;
+-    }
+ 
+-    if (lseek(fd, FIP_header_len, SEEK_SET) < 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "lseek error %s\n", dev_name);
+-        close(fd);
++    kernel_len = blapi_system_get_kernel_len();
++    rootfs_len = blapi_system_get_rootfs_len(boot_flag);
++    if (kernel_len <= 0 || rootfs_len <= 0)
+         return -1;
+-    }
+-
+-    if (read(fd, &trx, sizeof(struct trx_header)) != sizeof(struct trx_header)) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "read error %s\n", dev_name);
+-        close(fd);
+-        return -1;
+-    }
+ 
+-    close(fd);
++    fw_size = kernel_len + rootfs_len;
+ 
+-    /* 5. Calculate firmware length */
+-    total_len = FIP_header_len + trx.len;
+-    total_len = (total_len % FW_ALIGNMENT == 0)
+-              ? total_len
+-              : (((total_len / FW_ALIGNMENT) + 1) * FW_ALIGNMENT);
+-
+-    fw_size = total_len;
+-
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "[%s - %s] FIP header len: %d, original fw size: %u, total fw size: %d\n", mtd_name, dev_name, FIP_header_len, trx.len, fw_size);
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "Total fw size: %d", fw_size);
+     return fw_size;
+ }
+ 
+ int Hal_genFirmware(const char *firmware_file, size_t *fw_size)
+ {
+-    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter\n");
+-    char mtd_name[STR_LEN_16] = {0};
+-    char cmd[STR_LEN_128] = {0};
+-    char buf[STR_LEN_64] = {0};
++    #define BLOCK_SIZE 1024
++    HAL_LOG_DBG(LOG_TAG_GENERAL, "Enter");
+     char *dir_path = NULL;
+-    int total_size = 0;
++    char buf[STR_LEN_64] = {0};
++    char boot_flag = -1;
++    int kernel_len = -1;
++    int rootfs_len = 0;
++    char kernel_dev[STR_LEN_16] = {0};
++    char rootfs_dev[STR_LEN_16] = {0};
++    int n_block = 0;
++    int rem_bytes = 0;
+ 
+     if (!firmware_file || !fw_size)
+         return HAL_FAILURE;
+@@ -186,28 +91,35 @@ int Hal_genFirmware(const char *firmware_file, size_t *fw_size)
+     dir_path = dirname(buf);
+ 
+     if (mkdir(dir_path, 0755) < 0 && errno != EEXIST) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot create %s\n", dir_path);
++        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot create %s", dir_path);
+         return HAL_FAILURE;
+     }
+ 
+-    /* 2. Get real firmware size */
+-    if ((total_size = Hal_getFirmwareSize()) <= 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Firmware size is invalid %d\n", total_size);
++    /* 2. Get boot flag */
++    if (Hal_getCurrentBootFlag(&boot_flag) != HAL_SUCCESS)
+         return HAL_FAILURE;
+-    }
+ 
+-    /* 3. Get mtd name */
+-    if (get_mtd_name(mtd_name, sizeof(mtd_name)) < 0) {
+-        HAL_LOG_ERR(LOG_TAG_GENERAL, "Cannot get mtd name\n");
+-        return -1;
++    /* 3. Get kernel + rootfs */
++    kernel_len = blapi_system_get_kernel_len();
++    rootfs_len = blapi_system_get_rootfs_len(boot_flag);
++    blapi_system_get_partition_dev(boot_flag, kernel_dev, sizeof(kernel_dev), rootfs_dev, sizeof(rootfs_dev));
++
++    if (kernel_len <= 0 || rootfs_len <= 0 || kernel_dev[0] == 0 || rootfs_dev[0] == 0) {
++        HAL_LOG_ERR(LOG_TAG_GENERAL, "Failed to get kernel or rootfs info");
++        return HAL_FAILURE;
+     }
+ 
++    n_block = rootfs_len / BLOCK_SIZE;
++    rem_bytes = rootfs_len % BLOCK_SIZE;
++
+     /* 4. Generate firmware from mtd device */
+-    snprintf(cmd, sizeof(cmd), "/sbin/ecnt_mtd readflash %s %d 0 %s", firmware_file, total_size, mtd_name);
+-    system(cmd);
+-    *fw_size = total_size;
++    HalUtils_cmdExec("(cat %s; dd if=%s bs=%d count=%d 2>/dev/null) > %s", kernel_dev, rootfs_dev, BLOCK_SIZE, n_block, firmware_file);
++    if (rem_bytes > 0)
++        HalUtils_cmdExec("dd if=%s bs=1 skip=%d count=%d 2>/dev/null >> %s", rootfs_dev, n_block*BLOCK_SIZE, rem_bytes, firmware_file);
++
++    *fw_size = kernel_len + rootfs_len;
+ 
+-    HAL_LOG_INFO(LOG_TAG_GENERAL, "Get firmware successfully [%s - %d] in mtd %s\n", firmware_file, total_size, mtd_name);
++    HAL_LOG_INFO(LOG_TAG_GENERAL, "Get firmware successfully [%s - %d] in [%s-%s]", firmware_file, *fw_size, kernel_dev, rootfs_dev);
+     return HAL_SUCCESS;
+ }
+ 
+</pre></details>
         </div>
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79723' target='_blank'>[ARHT-108] Dual uplink: Add Connection Type (GPON line)</a></div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>The patch introduces HalNetwork_getVendorList and uses it in NetworkUplinkGet, but the prototype for this function is missing from hal_network.h. Additionally, the vendor list is hardcoded to a count of 3 with static names ("Connection 1", etc.) in the API layer, which might be better served by a more dynamic approach or at least defined constants. There is also a pre-existing typo HalUltils_getPIDByName in the context of hal_network.c.
+            <span class="badge cr-badge">Needs Work</span>
+            <div class="subject">[ARHT-108] Dual uplink: Add Connection Type (GPON line)</div>
+            <p>Owner: [Marusys VINA] Jack | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79723" target="_blank">View on Gerrit</a></p>
+            <div>The patch introduces HalNetwork_getVendorList and uses it in NetworkUplinkGet, but the prototype for this function is missing from hal_network.h. Additionally, the vendor list is hardcoded to a count of 3 with static names ("Connection 1", etc.) in the API layer, which might be better served by a more dynamic approach or at least defined constants. There is also a pre-existing typo HalUltils_getPIDByName in the context of hal_network.c.
 
 <details>
 <summary>Detailed Feedback</summary>
@@ -46,29 +569,515 @@
 - **Missing Prototype**: `HalNetwork_getVendorList` is used in `FalNetwork.cpp` but not declared in `hal_network.h`.
 - **Hardcoded Strings**: "Connection 1", "Connection 2", and "Connection 3" are hardcoded in the API response. These should ideally come from the HAL or be defined as macros.
 - **Consistency**: The `vendorId` is added to `HalNetwork_dualuplink_t` but ensure all initialization paths for this struct are covered.
-</details></pre></div>
+</details></div>
+            <details><summary>Patch Content</summary><pre>commit 1c538aae76e4dda58295fe6b10abf5ae143c0057
+Author: hvn_jack <hvn_jack@humax-networks.com>
+Date:   Mon Mar 2 08:20:42 2026 +0000
+
+    [ARHT-108] Dual uplink: Add Connection Type (GPON line)
+    
+    Change-Id: Ib370f54add18b9744b5ae178e5b85113eaac432a
+
+diff --git a/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp b/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
+index 63c620671a..bc5e0be834 100644
+--- a/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
++++ b/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
+@@ -1237,6 +1237,7 @@ FAL_RESP_T* FalNetwork::NetworkUplinkGet(FAL_REQ_T* req)
+     char sJsonName[STR_LEN_64] = {0};
+     HalNetwork_dualuplink_t dualUplink = {0};
+     HalNetwork_opermode_t operMode = {0};
++    HalNetwork_vendorlist_t vendorList = {0};
+ 
+     CREATE_RESP_CHECK_REQ(pResp, req, FAL_RESP_OBJECT);
+ 
+@@ -1252,6 +1253,12 @@ FAL_RESP_T* FalNetwork::NetworkUplinkGet(FAL_REQ_T* req)
+         return pResp;
+     }
+ 
++    if (HalNetwork_getVendorList(&vendorList) != HAL_SUCCESS) {
++        HAL_APP_ERR(LOG_TAG_GENERAL, "Failed get vendor list");
++        pResp->result = FAL_ERROR;
++        return pResp;
++    }
++
+     up = HalNetwork_IsUplinkUp(operMode.uplink);
+ 
+     pResp->pobj->set<bool>("allowAdmin", dualUplink.allowAdmin);
+@@ -1276,6 +1283,20 @@ FAL_RESP_T* FalNetwork::NetworkUplinkGet(FAL_REQ_T* req)
+     pResp->pobj->set<bool>(API_DUAL_TAGGED, dualUplink.tagged);
+     pResp->pobj->set<int>(API_DUAL_DELAY, dualUplink.timer.backupOverTime);
+ 
++    // Vendor list
++    pResp->pobj->set<int>(API_VENDORID_COUNT, 3); // HUMA, HWTC, FHTT
++    pResp->pobj->set<int>(API_VENDORID_SELECT, operMode.vendorId);
++
++    pResp->pobj->set<int>("vendorid.list.[0].index", 1);
++    pResp->pobj->set<const char *>("vendorid.list.[0].name", "Connection 1");
++    pResp->pobj->set<const char *>("vendorid.list.[0].vendorid", vendorList.vendor1);
++    pResp->pobj->set<int>("vendorid.list.[1].index", 2);
++    pResp->pobj->set<const char *>("vendorid.list.[1].name", "Connection 2");
++    pResp->pobj->set<const char *>("vendorid.list.[1].vendorid", vendorList.vendor2);
++    pResp->pobj->set<int>("vendorid.list.[2].index", 3);
++    pResp->pobj->set<const char *>("vendorid.list.[2].name", "Connection 3");
++    pResp->pobj->set<const char *>("vendorid.list.[2].vendorid", vendorList.vendor3);
++
+     pResp->result = FalUtil_getResult(HAL_SUCCESS);
+     return pResp;
+ }
+@@ -1288,15 +1309,19 @@ FAL_RESP_T* FalNetwork::NetworkUplinkUpdate(FAL_REQ_T* req)
+     char value[STR_LEN_32] = {0};
+     char sJsonName[STR_LEN_64] = {0};
+     int i = -1;
++    int vendorID = -1;
+     HalNetwork_dualuplink_t dualUplink = {0};
+     HalNetwork_opermode_t operMode = {0};
+ 
+     CREATE_RESP_CHECK_REQ(pResp, req, FAL_RESP_OBJECT);
+ 
++    vendorID = req->pobj->get<int>(API_VENDORID_SELECT);
++    if (vendorID < 1 || vendorID > 3)
++        vendorID = 1;
++
+     snprintf(value, sizeof(value), "%s", req->pobj->get<const char *>(API_MODE));
+     if (strcmp(value, API_DUAL) != 0) {
+         // Single mode
+-
+         HalNetwork_getOperationMode(&operMode);
+ 
+         snprintf(value, sizeof(value), "%s", req->pobj->get<const char *>(API_SINGLE_OPERATION));
+@@ -1308,11 +1333,11 @@ FAL_RESP_T* FalNetwork::NetworkUplinkUpdate(FAL_REQ_T* req)
+             operMode.uplink = UPLINK_PON;
+ 
+         operMode.tagged = req->pobj->get<bool>(API_SINGLE_TAGGED);
++        operMode.vendorId = vendorID;
+ 
+         ret = HalNetwork_setSingleUplink(&operMode);
+     } else {
+         // Dual mode
+-
+         HalNetwork_getDualUplink(&dualUplink);
+ 
+         dualUplink.enabled = true;
+@@ -1333,7 +1358,9 @@ FAL_RESP_T* FalNetwork::NetworkUplinkUpdate(FAL_REQ_T* req)
+             dualUplink.uplink[i].tagged = dualUplink.tagged;
+         }
+ 
++        dualUplink.vendorId = vendorID;
+         dualUplink.timer.backupOverTime = req->pobj->get<int>(API_DUAL_DELAY);
++
+         ret = HalNetwork_setDualUplink(&dualUplink);
+     }
+ 
+diff --git a/tclinux_phoenix/apps/hni/backend/utils/config/url_rewrite_ais.txt b/tclinux_phoenix/apps/hni/backend/utils/config/url_rewrite_ais.txt
+index a36e1aaf5f..cc336e3313 100755
+--- a/tclinux_phoenix/apps/hni/backend/utils/config/url_rewrite_ais.txt
++++ b/tclinux_phoenix/apps/hni/backend/utils/config/url_rewrite_ais.txt
+@@ -1 +1 @@
+-/home=./www/index.html,/status/device=./www/index.html,/status/wan/network=./www/index.html,/status/hostnetwork/wan=./www/index.html,/status/lan/network=./www/index.html,/status/lan/ethernet=./www/index.html,/status/lan/wlan=./www/index.html,/status/locking=./www/index.html,/status/statistics/wan=./www/index.html,/status/statistics/ethernet=./www/index.html,/status/statistics/wlan=./www/index.html,/status/statistics/optical=./www/index.html,/status/arp=./www/index.html,/status/neighbor=./www/index.html,/status/mesh=./www/index.html,/basicsetup/lan/ip=./www/index.html,/basicsetup/lan/reserved=./www/index.html,/basicsetup/lan/ethernet=./www/index.html,/basicsetup/wlan/primary=./www/index.html,/basicsetup/wlan/guest=./www/index.html,/basicsetup/wlan/bandsteering=./www/index.html,/basicsetup/wlan/advanced=./www/index.html,/basicsetup/wlan/wps=./www/index.html,/basicsetup/wlan/meshsetting=./www/index.html,/basicsetup/wlan/meshbackhaul=./www/index.html,/basicsetup/nat/portforwarding=./www/index.html,/basicsetup/nat/dmz=./www/index.html,/basicsetup/nat/alg=./www/index.html,/basicsetup/security/ipfiltering=./www/index.html,/basicsetup/security/macfiltering=./www/index.html,/basicsetup/security/firewall=./www/index.html,/basicsetup/parental=./www/index.html,/basicsetup/routing=./www/index.html,/advancedsetup/wan=./www/index.html,/advancedsetup/telnet=./www/index.html,/advancedsetup/ssh=./www/index.html,/advancedsetup/service=./www/index.html,/advancedsetup/cwmp=./www/index.html,/advancedsetup/mirror=./www/index.html,/advancedsetup/log=./www/index.html,/advancedsetup/trafficcontrol=./www/index.html,/application/storage/device=./www/index.html,/application/storage/samba=./www/index.html,/application/storage/ftp=./www/index.html,/application/storage/printer=./www/index.html,/application/dlna=./www/index.html,/application/ddns=./www/index.html,/application/upnp=./www/index.html,/application/wol=./www/index.html,/management/operationmode=./www/index.html,/management/reboot=./www/index.html,/management/setting/backup=./www/index.html,/management/setting/update=./www/index.html,/management/setting/reset=./www/index.html,/management/account=./www/index.html,/management/ont=./www/index.html,/management/ntp=./www/index.html,/management/ledmode=./www/index.html,/management/tool/diagnostic=./www/index.html,/management/tool/ais=./www/index.html,/management/tool/tr181=./www/index.html,/management/softwaresubversion=./www/index.html,/stun=./www/index.html,/aisroamingtest=./www/index.html,/aismeshpresettput=./www/index.html,/aismeshpresetroaming=./www/index.html,/aismeshpresetrestore=./www/index.html,/hmxloose=./www/index.html,/management/dualuplink=./www/index.html,
++/home=./www/index.html,/status/device=./www/index.html,/status/wan/network=./www/index.html,/status/hostnetwork/wan=./www/index.html,/status/lan/network=./www/index.html,/status/lan/ethernet=./www/index.html,/status/lan/wlan=./www/index.html,/status/locking=./www/index.html,/status/statistics/wan=./www/index.html,/status/statistics/ethernet=./www/index.html,/status/statistics/wlan=./www/index.html,/status/statistics/optical=./www/index.html,/status/arp=./www/index.html,/status/neighbor=./www/index.html,/status/mesh=./www/index.html,/basicsetup/lan/ip=./www/index.html,/basicsetup/lan/reserved=./www/index.html,/basicsetup/lan/ethernet=./www/index.html,/basicsetup/wlan/primary=./www/index.html,/basicsetup/wlan/guest=./www/index.html,/basicsetup/wlan/bandsteering=./www/index.html,/basicsetup/wlan/advanced=./www/index.html,/basicsetup/wlan/wps=./www/index.html,/basicsetup/wlan/meshsetting=./www/index.html,/basicsetup/wlan/meshbackhaul=./www/index.html,/basicsetup/nat/portforwarding=./www/index.html,/basicsetup/nat/dmz=./www/index.html,/basicsetup/nat/alg=./www/index.html,/basicsetup/security/ipfiltering=./www/index.html,/basicsetup/security/macfiltering=./www/index.html,/basicsetup/security/firewall=./www/index.html,/basicsetup/parental=./www/index.html,/basicsetup/routing=./www/index.html,/advancedsetup/wan=./www/index.html,/advancedsetup/telnet=./www/index.html,/advancedsetup/ssh=./www/index.html,/advancedsetup/service=./www/index.html,/advancedsetup/cwmp=./www/index.html,/advancedsetup/mirror=./www/index.html,/advancedsetup/log=./www/index.html,/advancedsetup/trafficcontrol=./www/index.html,/application/storage/device=./www/index.html,/application/storage/samba=./www/index.html,/application/storage/ftp=./www/index.html,/application/storage/printer=./www/index.html,/application/dlna=./www/index.html,/application/ddns=./www/index.html,/application/upnp=./www/index.html,/application/wol=./www/index.html,/management/operationmode=./www/index.html,/management/reboot=./www/index.html,/management/setting/backup=./www/index.html,/management/setting/update=./www/index.html,/management/setting/reset=./www/index.html,/management/account=./www/index.html,/management/ont=./www/index.html,/management/ntp=./www/index.html,/management/ledmode=./www/index.html,/management/tool/diagnostic=./www/index.html,/management/tool/ais=./www/index.html,/management/tool/tr181=./www/index.html,/management/softwaresubversion=./www/index.html,/stun=./www/index.html,/aisroamingtest=./www/index.html,/aismeshpresettput=./www/index.html,/aismeshpresetroaming=./www/index.html,/aismeshpresetrestore=./www/index.html,/hmxloose=./www/index.html,/management/uplinksetting=./www/index.html,
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
+index 791d61242b..ed30101e9b 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
++++ b/tclinux_phoenix/apps/hni/hal_unify/include/hal_network.h
+@@ -274,6 +274,7 @@ typedef struct
+     HalNetwork_uplink_t uplink[MAX_DUALUPLINK_MODE];
+     HalNetwork_uplink_timer_t timer;
+     int flag;
++    int vendorId;
+ } HalNetwork_dualuplink_t;
+ 
+ typedef struct {
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+index 8218e0f3c9..6ca6a51180 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
++++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+@@ -6666,17 +6666,24 @@ static bool dualuplink_IsUplinkChanged(HalNetwork_dualuplink_t *pNew)
+     return false;
+ }
+ 
+-int HalNetwork_setDualUplink(HalNetwork_dualuplink_t *pDualUplink)
++static bool dualuplink_isVendorChanged(int newID)
++{
++    int currentID = 0;
++    if (HalConfig_getIntValue(CONFIG_OPERMODE, OPTION_VENDORID, &currentID) != HAL_SUCCESS)
++        return false;
++
++    return (currentID != newID);
++}
++
++static bool dualuplink_updateCfg(HalNetwork_dualuplink_t *pDualUplink)
+ {
+     char cfgNode[STR_LEN_64] = {0};
+     int i = 0, main = 0, backup = 0;
+     bool tagged = false;
+-    HalNetwork_opermode_t operMode = {0};
+     bool uplinkChanged = false;
+-    int pid = -1;
+ 
+     if  (!pDualUplink)
+-        return HAL_FAILURE;
++        return false;
+ 
+     uplinkChanged = dualuplink_IsUplinkChanged(pDualUplink);
+ 
+@@ -6706,17 +6713,34 @@ int HalNetwork_setDualUplink(HalNetwork_dualuplink_t *pDualUplink)
+         tagged = pDualUplink->tagged;
+         // Store dualuplink values
+         HalUtils_cmdExec("prolinecmd dualuplink set %d:%d:%s:%s > /dev/null 2>&1", pDualUplink->enabled ? 1 : 0, tagged ? 1 : 0, UplinkTypeMap[main].cfg_name, UplinkTypeMap[backup].cfg_name);
++        HAL_LOG_NOTI(LOG_TAG_GENERAL, "New dual uplink [Enabled: %d] - [Main: %s] - [Backup: %s] - Tagged [%d]", pDualUplink->enabled ? 1 : 0, UplinkTypeMap[main].cfg_name, UplinkTypeMap[backup].cfg_name, tagged);
++    }
++
++    return uplinkChanged;
++}
++
++int HalNetwork_setDualUplink(HalNetwork_dualuplink_t *pDualUplink)
++{
++    HalNetwork_opermode_t operMode = {0};
++    bool uplinkChanged = false;
++    bool vendorChanged = false;
++    int pid = -1;
++
++    if  (!pDualUplink)
++        return HAL_FAILURE;
++
++    uplinkChanged = dualuplink_updateCfg(pDualUplink);
++    vendorChanged = dualuplink_isVendorChanged(pDualUplink->vendorId);
+ 
++    if ((uplinkChanged || vendorChanged) && pDualUplink->enabled) {
+         // Set main uplink to operation mode
+-        if (pDualUplink->enabled) {
+-            HalNetwork_getOperationMode(&operMode);
+-            operMode.mode = OPERMODE_ROUTER;
+-            operMode.uplink = main;
+-            operMode.tagged = tagged;
++        HalNetwork_getOperationMode(&operMode);
++        operMode.mode = OPERMODE_ROUTER;
++        operMode.uplink = pDualUplink->uplink[pDualUplink->mode].main;
++        operMode.tagged = pDualUplink->tagged;
++        operMode.vendorId = pDualUplink->vendorId;
+ 
+-            HAL_LOG_NOTI(LOG_TAG_GENERAL, "Apply new dual uplink [Main: %s] - [Backup: %s] - Tagged [%d]", UplinkTypeMap[main].cfg_name, UplinkTypeMap[backup].cfg_name, tagged);
+-            HalNetwork_setOperationMode(&operMode, true);
+-        }
++        HalNetwork_setOperationMode(&operMode, true);
+     }
+ 
+     if ((pid = HalUltils_getPIDByName(APP_DUALUPLINK_NAME)) > 0)
+@@ -6738,7 +6762,7 @@ int HalNetwork_setSingleUplink(HalNetwork_opermode_t *pstOperMode)
+     dualUplink.mode = DUALUPLINK_PON_ETH;
+     dualUplink.uplink[DUALUPLINK_PON_ETH].main = UPLINK_PON;
+     dualUplink.uplink[DUALUPLINK_PON_ETH].backup = UPLINK_LAN3;
+-    HalNetwork_setDualUplink(&dualUplink);
++    dualuplink_updateCfg(&dualUplink);
+ 
+     // Apply operation mode
+     return HalNetwork_setOperationMode(pstOperMode, true);
+</pre></details>
         </div>
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79657' target='_blank'>[ARHT-104] System Log: Add some logs for covering all log levels</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Adding logs for various levels (warn, crit, alert, emerg) as requested. Looks correct and consistent with existing logging patterns.</pre></div>
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[ARHT-104] System Log: Add some logs for covering all log levels</div>
+            <p>Owner: [Marusys VINA] Jack | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79657" target="_blank">View on Gerrit</a></p>
+            <div>Adding logs for various levels (warn, crit, alert, emerg) as requested. Looks correct and consistent with existing logging patterns.</div>
+            <details><summary>Patch Content</summary><pre>commit 27a980ea38ea68d0628a1f7e8e1f72024563b90c
+Author: hvn_jack <hvn_jack@humax-networks.com>
+Date:   Wed Feb 25 13:23:24 2026 +0000
+
+    [ARHT-104] System Log: Add some logs for covering all log levels
+    
+    Change-Id: I7a0ba91261c650bcf9e70bd39ef75558398fd7a3
+
+diff --git a/openwrt-21.02/openwrt-21.02.1_dev/package/network/services/dropbear/files/dropbear.init b/openwrt-21.02/openwrt-21.02.1_dev/package/network/services/dropbear/files/dropbear.init
+index 44d976b490..27775b42c9 100755
+--- a/openwrt-21.02/openwrt-21.02.1_dev/package/network/services/dropbear/files/dropbear.init
++++ b/openwrt-21.02/openwrt-21.02.1_dev/package/network/services/dropbear/files/dropbear.init
+@@ -163,6 +163,8 @@ dropbear_instance()
+ 		return 1
+ 	}
+ 
++	logger -t ${NAME} -p daemon.warn "SSH is enabled"
++
+ 	PIDCOUNT="$(( ${PIDCOUNT} + 1))"
+ 	local pid_file="/var/run/${NAME}.${PIDCOUNT}.pid"
+ 
+diff --git a/openwrt-21.02/openwrt-21.02.1_dev/package/utils/busybox/files/telnet b/openwrt-21.02/openwrt-21.02.1_dev/package/utils/busybox/files/telnet
+index 86d7bba208..c7b4a6cfe3 100644
+--- a/openwrt-21.02/openwrt-21.02.1_dev/package/utils/busybox/files/telnet
++++ b/openwrt-21.02/openwrt-21.02.1_dev/package/utils/busybox/files/telnet
+@@ -25,6 +25,7 @@ start_service() {
+ 		return 0
+ 	fi
+ 
++	logger -t "telnet" -p daemon.warn "Telnet is enabled"
+ 	procd_open_instance
+ 	procd_set_param command "$PROG" -F -l /bin/login.sh
+ 	procd_close_instance
+diff --git a/tclinux_phoenix/BSP/xpon_bsp/modules/xpon/src/gpon/gpon_act.c b/tclinux_phoenix/BSP/xpon_bsp/modules/xpon/src/gpon/gpon_act.c
+index aa9a77ecb4..2f3a471df9 100755
+--- a/tclinux_phoenix/BSP/xpon_bsp/modules/xpon/src/gpon/gpon_act.c
++++ b/tclinux_phoenix/BSP/xpon_bsp/modules/xpon/src/gpon/gpon_act.c
+@@ -329,7 +329,10 @@ void gpon_act_change_gpon_state(const ENUM_GponState_t new_state)
+         pon_preb.oper_ranged_st = 0;
+         XPON_PHY_SET_API(PON_SET_PHY_GPON_EXTEND_PREAMBLE, &pon_preb);
+         XPON_PHY_SET_BIT_DELAY(0);
+-    }       
++    } else if (new_state == GPON_STATE_O1) {
++        if (GPON_CURR_STATE != GPON_STATE_O1)
++            printk(KERN_CRIT "Back to GPON STATE O1 - Not synchronized yet\n");
++    }
+     
+     /* Set the current state to MAC register */
+     gponActState.Raw = IO_GREG(G_ACTIVATION_ST) ;
+diff --git a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+index 470518f879..2cd02807f3 100644
+--- a/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
++++ b/tclinux_phoenix/apps/hni/hal_unify/src/hal_network.c
+@@ -5322,6 +5322,8 @@ int HalNetwork_executePortMirror(void)
+     if (stPortMirror.dst < MIRROR_LAN1 || stPortMirror.dst > MIRROR_LAN4)
+         return HAL_FAILURE;
+ 
++    HAL_LOG_ALERT(LOG_TAG_GENERAL, "Enable Port Mirror [src: %d] [dst: %d]", stPortMirror.src, stPortMirror.dst);
++
+     if (stPortMirror.src == MIRROR_WAN) {
+         snprintf(cmds, sizeof(cmds), SYS_WAN2LAN_ON, wan2LanBitmask[stPortMirror.dst]);
+         system(cmds);
+diff --git a/tclinux_phoenix/apps/hni/isplocking/isplocking.c b/tclinux_phoenix/apps/hni/isplocking/isplocking.c
+index b64f5628cd..473ff4e046 100644
+--- a/tclinux_phoenix/apps/hni/isplocking/isplocking.c
++++ b/tclinux_phoenix/apps/hni/isplocking/isplocking.c
+@@ -189,6 +189,7 @@ static state_e isplocking_locked(void)
+         lan_control_lock(true);
+         wan_control_lock();
+         monitor_start(); // Monitor lock status in real system.
++        HAL_APP_EMERG(LOG_TAG_GENERAL, "Device was locked");
+     }
+ 
+     set_locked_state(LOCKED);
+</pre></details>
         </div>
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79760' target='_blank'>[BIFROST-92] Version up 0.2.20</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Standard version bump to 0.2.20 and DRAM limit adjustment to 512M for HP2272B models.</pre></div>
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[BIFROST-92] Version up 0.2.20</div>
+            <p>Owner: Chunsu Lim(임춘수) | Project: airoha/2025q1</p>
+            <p><a href="http://git.humax-networks.com:8080/79760" target="_blank">View on Gerrit</a></p>
+            <div>Standard version bump to 0.2.20 and DRAM limit adjustment to 512M for HP2272B models.</div>
+            <details><summary>Patch Content</summary><pre>commit e4770100bbc016231c9921fa2143c672ba9814a8
+Author: cslim <cslim@humax-networks.com>
+Date:   Wed Mar 4 10:55:25 2026 +0900
+
+    [BIFROST-92] Version up 0.2.20
+    
+    -. dram_limit 512M
+    
+    Change-Id: I760712fe4e9fc50a9875ca1406f893f600979184
+
+diff --git a/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak b/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
+index e27f471e2..1158775e1 100755
+--- a/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
++++ b/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
+@@ -374,7 +374,7 @@ TCSUPPORT_BRIDGE_MAC_LIMIT=y
+ #
+ HNI_MODEL_HP2272B=y
+ HNI_MODEL_NAME="HP-2272B"
+-HNI_FIRMWARE_VERSION="0.2.18"
++HNI_FIRMWARE_VERSION="0.2.20"
+ HNI_SUPPORT_COMMON=y
+ HNI_SUPPORT_SYSLOG=y
+ HNI_SUPPORT_PORT_BINDING=y
+diff --git a/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/mi.conf b/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/mi.conf
+index 437dfdd55..383561f11 100755
+--- a/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/mi.conf
++++ b/airoha_feeds/airoha_build/profile/HP2272B/target/linux/airoha/an7583/mi.conf
+@@ -12,7 +12,7 @@ bootfile=tclinux.bin
+ loadaddr=0x81800000
+ arch=arm
+ cpu=armv7
+-dram_limit=1024M
++dram_limit=512M
+ board=en7583_evb
+ board_name=en7583_evb
+ vendor=airoha
+diff --git a/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak b/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
+index 40c923f09..b7d5dd6ba 100755
+--- a/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
++++ b/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/UNION_AN7583_KITE_LOGAN_EMMC_OPTEE_KERNEL_5_4_demo.mak
+@@ -374,7 +374,7 @@ TCSUPPORT_BRIDGE_MAC_LIMIT=y
+ #
+ HNI_MODEL_HPM2272B=y
+ HNI_MODEL_NAME="HPM-2272B"
+-HNI_FIRMWARE_VERSION="0.2.18"
++HNI_FIRMWARE_VERSION="0.2.20"
+ HNI_SUPPORT_5G_MODULE=y
+ HNI_SUPPORT_COMMON=y
+ HNI_SUPPORT_SYSLOG=y
+diff --git a/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/mi.conf b/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/mi.conf
+index 84fdbc2c0..d5c671614 100755
+--- a/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/mi.conf
++++ b/airoha_feeds/airoha_build/profile/HPM2272B/target/linux/airoha/an7583/mi.conf
+@@ -12,7 +12,7 @@ bootfile=tclinux.bin
+ loadaddr=0x81800000
+ arch=arm
+ cpu=armv7
+-dram_limit=1024M
++dram_limit=512M
+ board=en7583_evb
+ board_name=en7583_evb
+ vendor=airoha
+</pre></details>
         </div>
         <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject"><a href='http://git.humax-networks.com:8080/79761' target='_blank'>[ARHT-325] meshsync: Sync firmware</a></div>
-                <span class="badge lgtm-badge">LGTM</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Great refactor. Abstracting the partition logic into `blapi` simplifies `hal_other.c` significantly and makes the firmware generation process more robust.</pre></div>
-        </div></div></div></body></html>
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[HP2236BVA-64] Fix error 500 displays when creating bridge WAN</div>
+            <p>Owner: [Marusys VINA] Dante | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79756" target="_blank">View on Gerrit</a></p>
+            <div>Good error handling improvement. Mapping FAL_UNPROC_ENT to API_BAD_REQUEST (400) correctly reflects client-side input errors when creating/changing WAN, preventing unnecessary 500 Internal Server Errors.</div>
+            <details><summary>Patch Content</summary><pre>commit 628d17bcecab105dfe8b948ac01adebcaeb1abeb
+Author: hvn_hxtuan <hvn_hxtuan@humax-networks.com>
+Date:   Tue Mar 3 11:09:48 2026 +0000
+
+    [HP2236BVA-64] Fix error 500 displays when creating bridge WAN
+    
+    Change-Id: I61e7a25ae4d796305b1dcebbdc3424be6b3be281
+
+diff --git a/tclinux_phoenix/apps/hni/backend/api/api_al/inc/ApiErrorReporter.h b/tclinux_phoenix/apps/hni/backend/api/api_al/inc/ApiErrorReporter.h
+index a1197f5866..d3c9e67e53 100755
+--- a/tclinux_phoenix/apps/hni/backend/api/api_al/inc/ApiErrorReporter.h
++++ b/tclinux_phoenix/apps/hni/backend/api/api_al/inc/ApiErrorReporter.h
+@@ -35,7 +35,7 @@ enum API_RET_T
+     API_CREATED = 201,
+     API_ACCEPTED = 202,
+     API_NO_CONTENT = 204,
+-
++    API_BAD_REQUEST = 400,
+     API_UNAUTHORIZED = 401,
+     API_FORBIDDEN = 403,
+     API_NO_METHOD_ALLOWED = 405,
+diff --git a/tclinux_phoenix/apps/hni/backend/api/api_al/src/ApiErrorReporter.cpp b/tclinux_phoenix/apps/hni/backend/api/api_al/src/ApiErrorReporter.cpp
+index 529331c012..bb2650a5d7 100755
+--- a/tclinux_phoenix/apps/hni/backend/api/api_al/src/ApiErrorReporter.cpp
++++ b/tclinux_phoenix/apps/hni/backend/api/api_al/src/ApiErrorReporter.cpp
+@@ -66,7 +66,8 @@ API_RESULT_REPORT_T ApiResults[MAX_NUM_OF_API_RESULT] = {
+     {API_CRC_ERROR, "crc_error", "CRC error in firmware or file"},
+     {API_INTERNET_DISCONNECTED, "internet_disconnected", "Internet disconnected"},
+     {API_UPGRADE_FAIL, "Invalid firmware file", "Invalid firmware file"},
+-    {API_INVALID_PIN_CODE, "Invalid pin code", "Invalid PIN code"}
++    {API_INVALID_PIN_CODE, "Invalid pin code", "Invalid PIN code"},
++    {API_BAD_REQUEST, "invalid_parameters", "One or more request parameters are invalid"}
+ };
+ 
+ ErrorReportMapType ErrorReportMap;
+@@ -106,6 +107,8 @@ void ApiErrorReporter::init()
+     REG_ERR_REPORT(API_TYPE_SECURITY, SECURITY_PARENTALCONTROL_FILTER_CREATE_RESP, FAL_NOT_FOUND, API_NO_RESOURCE);
+     
+     REG_ERR_REPORT(API_TYPE_QOS, QOS_RULES_CREATE_RESP, FAL_NOT_FOUND, API_NO_RESOURCE);
++    REG_ERR_REPORT(API_TYPE_NETWORK, NETWORK_WAN_ADD_RESP, FAL_UNPROC_ENT, API_BAD_REQUEST);
++    REG_ERR_REPORT(API_TYPE_NETWORK, NETWORK_WAN_CHANGE_RESP, FAL_UNPROC_ENT, API_BAD_REQUEST);
+ }
+ 
+ TreeMapObject* ApiErrorReporter::createErrorObject(unsigned int apiError)
+diff --git a/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp b/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
+index 63c620671a..0ef420b4fb 100644
+--- a/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
++++ b/tclinux_phoenix/apps/hni/backend/fal/fal_ecnt/src/FalNetwork.cpp
+@@ -876,7 +876,6 @@ FAL_RESP_T* FalNetwork::NetworkWan2Add(FAL_REQ_T* req)
+         goto end_NetworkWan2Add;
+     } else if (nRet != HAL_SUCCESS) {
+         HAL_APP_ERR(LOG_TAG_GENERAL, "Cannot Add and Apply wan settings to cfg [%d]", nRet);
+-        nRet = HAL_FAILURE;
+         goto end_NetworkWan2Add;
+     }
+ 
+@@ -926,7 +925,6) FAL_RESP_T* FalNetwork::NetworkWan2Change(FAL_REQ_T* req)
+         goto end_NetworkWan2Change;
+     } else if (nRet != HAL_SUCCESS) {
+         HAL_APP_ERR(LOG_TAG_GENERAL, "Cannot Apply wan settings to cfg [%d]", nRet);
+-        nRet = HAL_FAILURE;
+         goto end_NetworkWan2Change;
+     }
+ 
+diff --git a/tclinux_phoenix/apps/hni/backend/wsl/wal/src/DataBuilder.cpp b/tclinux_phoenix/apps/hni/backend/wsl/wal/src/DataBuilder.cpp
+index 6f73f31a8e..4070c0b823 100755
+--- a/tclinux_phoenix/apps/hni/backend/wsl/wal/src/DataBuilder.cpp
++++ b/tclinux_phoenix/apps/hni/backend/wsl/wal/src/DataBuilder.cpp
+@@ -37,6 +37,7 @@ HTTP_RESULT_T DataBuilder::getHttpResult(API_RET_T result)
+     case API_INVALID_PARAMETER:
+     case API_INVALID_FIELD:
+     case API_INVALID_JSON:
++    case API_BAD_REQUEST:
+         return (HTTP_RET_BAD_REQUEST);
+     case API_ERROR:
+         return (HTTP_RET_SERVER_ERROR);
+</pre></details>
+        </div>
+        <div class="review-card">
+            <span class="badge lgtm-badge">LGTM</span>
+            <div class="subject">[HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list</div>
+            <p>Owner: Deokwon Kang(강덕원) | Project: airoha/2025q3</p>
+            <p><a href="http://git.humax-networks.com:8080/79808" target="_blank">View on Gerrit</a></p>
+            <div>The patch addresses the described issue or optimization effectively.</div>
+            <details><summary>Patch Content</summary><pre>commit bc10b1ff91f31ff645bd25a8b6231c44b50be13a
+Author: DEOKWONKANG <dwkang@humax-networks.com>
+Date:   Thu Mar 5 00:52:15 2026 +0000
+
+    [HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list
+    
+     - InternetGatewayDevice.LANDevice.1.Hosts
+    
+    Change-Id: I16c2c45b8b15f0e6b3cf5bd3208fcb19514f5b12
+
+diff --git a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device
+index 232b606233b..215f9761ecf 100644
+--- a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device
++++ b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device
+@@ -2362,9 +2362,16 @@ hosts_browse_instances() {
+ 	local client_count
+ 	client_count=$(echo "$result" | jsonfilter -e '@.number_client')
+ 	local index_device=$(echo "$parameter" | sed -n 's/.*Hosts\.Host\.\([0-9]\+\).*/\1/p')
++	local host_idx=0
+ 
+ 	for i in $(seq 0 $((client_count - 1))); do
+-		offset=$((i + 1))
++		local netType
++		netType=$(echo "$result" | jsonfilter -e "@.infor[$i].networkType")
++		[ "$netType" = "backhaul" ] && continue
++
++		host_idx=$((host_idx + 1))
++		offset="$host_idx"
++
+ 		if [ -n "$index_device" ] && [ "$index_device" -ne "$offset" ]; then
+ 			continue
+ 		fi
+@@ -2420,14 +2427,23 @@ hosts_browse_instances() {
+ 
+ get_HostNumberOfEntries() {
+ 	local result
+-		result=$(ubus call hni getLanDeviceList "{}" 2>/dev/null)
+-		if [ -z "$result" ]; then
+-				return 0
+-		fi
++	result=$(ubus call hni getLanDeviceList "{}" 2>/dev/null)
++	if [ -z "$result" ]; then
++		return 0
++	fi
++
++	local client_count
++	client_count=$(echo "$result" | jsonfilter -e '@.number_client')
++
++	local cnt=0
++	local i netType
++	for i in $(seq 0 $((client_count - 1))); do
++		netType=$(echo "$result" | jsonfilter -e "@.infor[$i].networkType")
++		[ "$netType" = "backhaul" ] && continue
++		cnt=$((cnt + 1))
++	done
+ 
+-		local client_count
+-		client_count=$(echo "$result" | jsonfilter -e '@.number_client')
+-		echo $client_count
++	echo "$cnt"
+ }
+ 
+ get_lan_device_hostname() {
+</pre></details>
+        </div></div></body></html>
