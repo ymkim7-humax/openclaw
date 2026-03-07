@@ -10,81 +10,42 @@
         pre { background: #000; padding: 15px; border-radius: 6px; overflow-x: auto; color: #e2e8f0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
         a { color: #3b82f6; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
     </style>
     </head><body>
     <div style="max-width: 1000px; margin: auto;">
-        <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
+        <a href="../index.html" class="back-link">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
         <div id="reviews-container">
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-55] Optimize: Combine multiple LED control commands into a single execution</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+                <div class="subject">[ARHT-55] [BIFROST-20] LEDCTRL migration & bringup</div>
+                <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim | Patch Set: 1</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>LED 제어 로직을 통합하여 실행 회수를 최적화하고, 시스템 프로크 명칭을 최신 SDK에 맞게 매핑한 적절한 패치입니다. LGTM 입닸다.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-108] Dual uplink: Add Connection Type (GPON line)</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+                <div class="subject">[HP2236BVA-87] Fix error server connection failure</div>
+                <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Dante | Patch Set: 2</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>PPPoE 사용자 정보 동기화 및 3rdpartyagent 재시작 로직을 추가하여 서비스 연결 실패 문제를 해결했습니다.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-325] meshsync:</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+                <div class="subject">[ARHT-55] LED controller app migration</div>
+                <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim | Patch Set: 1</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>AP 모드 및 게스트 WiFi 시나리오에서의 LED 오동재 문제를 sscanf 로직 강화로 해결한 패치입니다.</pre></div>
         </div>
         <div class="review-card">
             <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-325] meshsync: Sync firmware</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+                <div class="subject">[ARHT-89] Fix kernel panic issue on dnstrap module</div>
+                <span class="badge lgtm-badge">LGTM</span>
             </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-95] Update Backhaul interface name to the correct value</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-104] System Log: Add some logs for covering all log levels</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[HP2236BVA-64] Fix error 500 displays when creating bridge WAN</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
-        </div>
-        <div class="review-card">
-            <div style="display:flex; justify-content:space-between; align-items:start;">
-                <div class="subject">[ARHT-197] fix AP mode LOS/PON led behavior (reboot)</div>
-                <span class="badge detail-badge">DETAILED FEEDBACK</span>
-            </div>
-            <div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div>
-            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Analyzing...</pre></div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Jack | Patch Set: 1</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>이더넷 헤더가 없는 패킷 처리 시 발생하던 커널 패닉 위험을 헤더 길이 검증을 통해 원차 차단한 중요한 수정입니다.</pre></div>
         </div></div></div></body></html>
