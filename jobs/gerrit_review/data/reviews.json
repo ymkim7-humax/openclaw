@@ -1,4 +1,48 @@
 {
+  "Iff803b2bcc2e436bd32617cca66b716122a6287e_1": {
+    "number": "79837",
+    "subject": "[ARHT-55] [BIFROST-20] LEDCTRL migration & bringup",
+    "project": "airoha/2025q1",
+    "owner": "Deuckyu Kim",
+    "url": "http://git.humax-networks.com:8080/79837",
+    "ps_num": "1",
+    "timestamp": 1772799375,
+    "verdict": "LGTM",
+    "opinion": "\ub2e4\uc218\uc758 LED \uc81c\uc5b4 \uba85\ub839\uc744 \ud1b5\ud569\ud558\uc5ec \uc2e4\ud589 \ud68c\uc218\ub97c \uc904\uc774\uace0, \ud504\ub85c\ud06c \ud30c\uc77c \uba85\uce6d\uc744 \ucd5c\uc2e0 \uaddc\uaca9\uc5d0 \ub9de\uac8c \uc218\uc815\ud55c \ud328\uce58\uc785\ub2c8\ub2e4. \uc131\ub2a5 \uac1c\uc120\uc774 \uae30\ub300\ub429\ub2c8\ub2e4."
+  },
+  "Ia5ef51854e63ec13b75fad33bc8926e348aa6152_2": {
+    "number": "79827",
+    "subject": "[HP2236BVA-87] Fix error server connection failure",
+    "project": "airoha/2025q3",
+    "owner": "Dante",
+    "url": "http://git.humax-networks.com:8080/79827",
+    "ps_num": "2",
+    "timestamp": 1772798010,
+    "verdict": "LGTM",
+    "opinion": "PPPoE \uc0ac\uc6a9\uc790 \uc815\ubcf4 \ub3d9\uae30\ud654 \ubc0f 3rdpartyagent \uc7ac\uc2dc\uc791 \ub85c\uc9c1\uc744 \ubcf4\uac15\ud558\uc5ec \uc11c\ube44\uc2a4 \uc5f0\uacb0 \uc2e4\ud328 \ubb38\uc81c\ub97c \ud574\uacb0\ud588\uc2b5\ub2c8\ub2e4."
+  },
+  "I0531f160b2624c5049a40051c63b4e140a8b9408_1": {
+    "number": "79836",
+    "subject": "[ARHT-55] LED controller app migration",
+    "project": "airoha/2025q1",
+    "owner": "Deuckyu Kim",
+    "url": "http://git.humax-networks.com:8080/79836",
+    "ps_num": "1",
+    "timestamp": 1772797827,
+    "verdict": "LGTM",
+    "opinion": "AP \ubaa8\ub4dc \ubc0f \uac8c\uc2a4\ud2b8 WiFi \uc2dc\ub098\ub9ac\uc624\uc5d0\uc11c\uc758 LED \uc624\ub3d9\uc7ac \ubb38\uc81c\ub97c \ud574\uacb0\ud55c \ud328\uce58\uc785\ub2c8\ub2e4."
+  },
+  "I0b23ee9c40650f6010cf646f05808295efbd58c4_1": {
+    "number": "79835",
+    "subject": "[ARHT-89] Fix kernel panic issue on dnstrap module",
+    "project": "airoha/2025q3",
+    "owner": "Jack",
+    "url": "http://git.humax-networks.com:8080/79835",
+    "ps_num": "1",
+    "timestamp": 1772793599,
+    "verdict": "LGTM",
+    "opinion": "\uc774\ub354\ub137 \ud5e4\ub354\uac00 \uc5c6\ub294 \ud328\ud0b7 \ucc98\ub9ac \uc2dc \ubc1c\uc0dd\ud558\ub358 \ucee4\ub110 \ud328\ub2c9 \ubb38\uc81c\ub97c \ud5e4\ub354 \uae38\uc774 \uac80\uc99d \ub85c\uc9c1\uc73c\ub85c \uc815\ud655\ud788 \ud574\uacb0\ud588\uc2b5\ub2c8\ub2e4."
+  },
   "Id720b43fbaca0ff91c89d858f8bb8d6e14238e4e_1": {
     "number": "79825",
     "subject": "[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall by clamping MSS",
@@ -8,31 +52,6 @@
     "ps_num": "1",
     "timestamp": 1772772429,
     "verdict": "LGTM",
-    "opinion": "DynDNS update MSS clamping patch.",
-    "patch_content": "No content available."
-  },
-  "I54c566ecc8281f05634debe0f29fbe264b24e75e_2": {
-    "number": "79800",
-    "subject": "[ARHT-55] Optimize: Combine multiple LED control commands into a single execution",
-    "project": "airoha/2025q3",
-    "owner": "Deuckyu Kim",
-    "url": "http://git.humax-networks.com:8080/79800",
-    "ps_num": "2",
-    "timestamp": 1772756545,
-    "verdict": "LGTM",
-    "opinion": "LED control optimization.",
-    "patch_content": "No content available."
-  },
-  "I16c2c45b8b15f0e6b3cf5bd3208fcb19514f5b12_2": {
-    "number": "79808",
-    "subject": "[HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list",
-    "project": "airoha/2025q3",
-    "owner": "Deokwon Kang",
-    "url": "http://git.humax-networks.com:8080/79808",
-    "ps_num": "2",
-    "timestamp": 1772784151,
-    "verdict": "LGTM",
-    "opinion": "Fixed issue where sub router was included in host list by filtering on networkType.",
-    "patch_content": "commit bc10b1ff91f31ff645bd25a8b6231c44b50be13a\nAuthor: DEOKWONKANG <dwkang@humax-networks.com>\nDate:   Thu Mar 5 00:52:15 2026 +0000\n\n    [HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list\n    \n     - InternetGatewayDevice.LANDevice.1.Hosts\n    \n    Change-Id: I16c2c45b8b15f0e6b3cf5bd3208fcb19514f5b12\n\ndiff --git a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\nindex 232b606233b..215f9761ecf 100644\n--- a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\n+++ b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\n@@ -2362,9 +2362,16 @@ hosts_browse_instances() {\n \tlocal client_count\n \tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n \tlocal index_device=$(echo \"$parameter\" | sed -n 's/.*Hosts\\.Host\\.\\([0-9]\\+\\).*/\\1/p')\n+\tlocal host_idx=0\n \n \tfor i in $(seq 0 $((client_count - 1))); do\n-\t\toffset=$((i + 1))\n+\t\tlocal netType\n+\t\tnetType=$(echo \"$result\" | jsonfilter -e \"@.infor[$i].networkType\")\n+\t\t[ \"$netType\" = \"backhaul\" ] && continue\n+\n+\t\thost_idx=$((host_idx + 1))\n+\t\toffset=\"$host_idx\"\n+\n \t\tif [ -n \"$index_device\" ] && [ \"$index_device\" -ne \"$offset\" ]; then\n \t\t\tcontinue\n \t\tfi\n@@ -2420,14 +2427,23 @@ hosts_browse_instances() {\n \n get_HostNumberOfEntries() {\n \tlocal result\n-\t\tresult=$(ubus call hni getLanDeviceList \"{}\" 2>/dev/null)\n-\t\tif [ -z \"$result\" ]; then\n-\t\t\t\treturn 0\n-\t\tfi\n+\tresult=$(ubus call hni getLanDeviceList \"{}\" 2>/dev/null)\n+\tif [ -z \"$result\" ]; then\n+\t\treturn 0\n+\tfi\n+\n+\tlocal client_count\n+\tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n+\n+\tlocal cnt=0\n+\tlocal i netType\n+\tfor i in $(seq 0 $((client_count - 1))); do\n+\t\tnetType=$(echo \"$result\" | jsonfilter -e \"@.infor[$i].networkType\")\n+\t\t[ \"$netType\" = \"backhaul\" ] && continue\n+\t\tcnt=$((cnt + 1))\n+\tdone\n \n-\t\tlocal client_count\n-\t\tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n-\t\techo $client_count\n+\techo \"$cnt\"\n }\n \n get_lan_device_hostname() {\n"
+    "opinion": "PMTUD \ube14\ub799\ud640 \ubc0f TLS \uc138\uc158 \uc131\ub9bd \uc9c0\uc5f0 \ubb38\uc81c\ub97c MSS \ud074\ub7a8\ud551\uc73c\ub85c \ud574\uacb0\ud55c \uc801\uc808\ud55c \ud328\uce58\uc785\ub2c8\ub2e4."
   }
 }
