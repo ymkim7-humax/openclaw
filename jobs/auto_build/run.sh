@@ -24,20 +24,16 @@ echo "HP2236B Result: $RET1"
 echo "HP2272B Result: $RET2"
 
 # Post-build: Finalize data collection
-# This updates webs/local/ and webs/github/
+# This script handles updating both local and github staging paths correctly
+# Targeted paths: jobs/auto_build/webs/index.html (Internal) and webs/auto_build/index.html (Public)
 python3 "$JOB_PATH/finalize.py"
-
-# Sync Staging to GitHub Repo Path
-# The user wants webs/github/ files to appear in remote repo's webs/ directory.
-echo "Syncing local github staging to repo webs/ directory..."
-cp "$WORKSPACE/webs/github/index.html" "$WORKSPACE/webs/index.html"
-cp "$WORKSPACE/webs/github/builds.json" "$WORKSPACE/webs/builds.json"
 
 # GitHub Auto-Push
 echo "Pushing updates to GitHub..."
 cd "$WORKSPACE"
-git add webs/index.html webs/builds.json
+# Only track the specific job dashboard, DO NOT touch the root portal index.html
+git add webs/auto_build/index.html
 git commit -m "Auto-update Build Dashboard: $(date '+%Y-%m-%d %H:%M:%S')"
 git push origin main
 
-echo "All tasks completed successfully. Dashboards are live! :-)"
+echo "All tasks completed successfully. Job dashboard is live! :-)"
