@@ -1,15 +1,4 @@
 {
-  "Iff803b2bcc2e436bd32617cca66b716122a6287e_1": {
-    "number": "79837",
-    "subject": "[ARHT-55] [BIFROST-20] LEDCTRL migration & bringup",
-    "project": "airoha/2025q1",
-    "owner": "Deuckyu Kim",
-    "url": "http://git.humax-networks.com:8080/79837",
-    "ps_num": "1",
-    "timestamp": 1772799375,
-    "verdict": "LGTM",
-    "opinion": "\ub2e4\uc218\uc758 LED \uc81c\uc5b4 \uba85\ub839\uc744 \ud1b5\ud569\ud558\uc5ec \uc2e4\ud589 \ud68c\uc218\ub97c \uc904\uc774\uace0, \ud504\ub85c\ud06c \ud30c\uc77c \uba85\uce6d\uc744 \ucd5c\uc2e0 \uaddc\uaca9\uc5d0 \ub9de\uac8c \uc218\uc815\ud55c \ud328\uce58\uc785\ub2c8\ub2e4. \uc131\ub2a5 \uac1c\uc120\uc774 \uae30\ub300\ub429\ub2c8\ub2e4."
-  },
   "Ia5ef51854e63ec13b75fad33bc8926e348aa6152_2": {
     "number": "79827",
     "subject": "[HP2236BVA-87] Fix error server connection failure",
@@ -19,7 +8,18 @@
     "ps_num": "2",
     "timestamp": 1772798010,
     "verdict": "LGTM",
-    "opinion": "PPPoE \uc0ac\uc6a9\uc790 \uc815\ubcf4 \ub3d9\uae30\ud654 \ubc0f 3rdpartyagent \uc7ac\uc2dc\uc791 \ub85c\uc9c1\uc744 \ubcf4\uac15\ud558\uc5ec \uc11c\ube44\uc2a4 \uc5f0\uacb0 \uc2e4\ud328 \ubb38\uc81c\ub97c \ud574\uacb0\ud588\uc2b5\ub2c8\ub2e4."
+    "opinion": "PPPoE 사용자 정보 동기화 및 3rdpartyagent 재시작 로직을 추가하여 서비스 연결 실패 문제를 해결했습니다."
+  },
+  "Iff803b2bcc2e436bd32617cca66b716122a6287e_1": {
+    "number": "79837",
+    "subject": "[ARHT-55] [BIFROST-20] LEDCTRL migration & bringup",
+    "project": "airoha/2025q1",
+    "owner": "Deuckyu Kim",
+    "url": "http://git.humax-networks.com:8080/79837",
+    "ps_num": "1",
+    "timestamp": 1772799375,
+    "verdict": "LGTM",
+    "opinion": "LED 제어 로직을 통합하여 실행 횟수를 최적화하고, 시스템 프로크 명칭을 최신 SDK에 맞게 매핑한 적절한 패치입니다. LGTM 입단다."
   },
   "I0531f160b2624c5049a40051c63b4e140a8b9408_1": {
     "number": "79836",
@@ -30,7 +30,7 @@
     "ps_num": "1",
     "timestamp": 1772797827,
     "verdict": "LGTM",
-    "opinion": "AP \ubaa8\ub4dc \ubc0f \uac8c\uc2a4\ud2b8 WiFi \uc2dc\ub098\ub9ac\uc624\uc5d0\uc11c\uc758 LED \uc624\ub3d9\uc7ac \ubb38\uc81c\ub97c \ud574\uacb0\ud55c \ud328\uce58\uc785\ub2c8\ub2e4."
+    "opinion": "AP 모드 및 게스트 WiFi 시나리오에서의 LED 오동작 문제를 sscanf 로직 강화로 해결한 패치입니다."
   },
   "I0b23ee9c40650f6010cf646f05808295efbd58c4_1": {
     "number": "79835",
@@ -41,17 +41,41 @@
     "ps_num": "1",
     "timestamp": 1772793599,
     "verdict": "LGTM",
-    "opinion": "\uc774\ub354\ub137 \ud5e4\ub354\uac00 \uc5c6\ub294 \ud328\ud0b7 \ucc98\ub9ac \uc2dc \ubc1c\uc0dd\ud558\ub358 \ucee4\ub110 \ud328\ub2c9 \ubb38\uc81c\ub97c \ud5e4\ub354 \uae38\uc774 \uac80\uc99d \ub85c\uc9c1\uc73c\ub85c \uc815\ud655\ud788 \ud574\uacb0\ud588\uc2b5\ub2c8\ub2e4."
+    "opinion": "이더넷 헤더가 없는 패킷 처리 시 발생하던 커널 패닉 위험을 헤더 길이 검증을 통해 원차 차단한 중요한 수정입니다."
   },
   "Id720b43fbaca0ff91c89d858f8bb8d6e14238e4e_1": {
     "number": "79825",
-    "subject": "[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall by clamping MSS",
+    "subject": "[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS",
     "project": "RG/dslpon/apollo",
-    "owner": "Myungsoo Kim",
+    "owner": "Myungsoo Kim(김명수)",
     "url": "http://git.humax-networks.com:8080/79825",
     "ps_num": "1",
     "timestamp": 1772772429,
     "verdict": "LGTM",
-    "opinion": "PMTUD \ube14\ub799\ud640 \ubc0f TLS \uc138\uc158 \uc131\ub9bd \uc9c0\uc5f0 \ubb38\uc81c\ub97c MSS \ud074\ub7a8\ud551\uc73c\ub85c \ud574\uacb0\ud55c \uc801\uc808\ud55c \ud328\uce58\uc785\ub2c8\ub2e4."
+    "opinion": "PMTUD blackhole 및 서비스 서브의 비정상적인 MSS(8910) 설정으로 인해 TLS ClientHello 패킷이 WAN 에그레스에서 드랍되는 문제를 TCP_MAXSEG(1460) 클램핑으로 해결한 적절한 패치입니다."
+  },
+  "I9ec74763fd14f86f958cea81c34d3b9995327f41_1": {
+    "key": "I9ec74763fd14f86f958cea81c34d3b9995327f41_1",
+    "number": "79845",
+    "subject": "[ARHT-394] Add Channel KPI Monitoring Script [2nd]",
+    "project": "airoha/2025q3",
+    "owner": "Hyungsuk Kang(강형석)",
+    "url": "http://git.humax-networks.com:8080/79845",
+    "ps_num": "1",
+    "timestamp": 1772944145,
+    "verdict": "LGTM",
+    "opinion": "iwpriv stat 결과에서 Tx/Rx 성공 및 실패 카운트를 파싱하여 주기에 따른 증감폭(Delta) 및 실패율(PER) 변화를 시각화하는 로직이 적절히 구현되었습니다. awk를 이용한 실수 연산과 카운터 래핑 처리도 안정적입니다."
+  },
+  "I2b8a0c733c14a700dd1c55a4c461756322c6e8e9_2": {
+    "key": "I2b8a0c733c14a700dd1c55a4c461756322c6e8e9_2",
+    "number": "79843",
+    "subject": "[ARHT-401] Add OBSS Scan Parameter IE on/off control (default: off)",
+    "project": "airoha/2025q3",
+    "owner": "Hyungsuk Kang(강형석)",
+    "url": "http://git.humax-networks.com:8080/79843",
+    "ps_num": "2",
+    "timestamp": 1772944101,
+    "verdict": "Needs Improvement",
+    "opinion": "<details>\n<summary>리뷰 상세 내용 (클릭)</summary>\n\n1. **기본값 불일치:** 커밋 메시지 제목에는 `(default: off)`라고 명시되어 있으나, `rtmp_init.c` 코드에서는 `bSendObssScanParamIE = TRUE`로 설정되어 있어 의도와 다를 수 있습니다.\n2. **즉각적인 반영 누락:** `Set_OBSSScanParamIE_Proc` 함수에서 설정값을 변경한 후 Beacon을 즉시 업데이트(rebuild)하는 로직이 빠져 있습니다. 설정 변경 후 다음 Beacon 빌드 시점까지 반영이 지연될 수 있으므로, `APMakeAllBacons(pAd)` 호출 등을 검토해 보시기 바랍니다.\n</details>"
   }
 }
