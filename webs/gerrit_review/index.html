@@ -16,9 +16,28 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-5][UXD] Home - Attached Devices : Fix incorrect connected devices</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>The patch correctly implements the requirement to avoid deleting bridge FDB entries when a port is down on platforms with `HNI_SUPPORT_COMMON` defined. 
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-80]Fixed: ACS PPP provisioning fail</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
 
-- **Logic**: By adding a `continue` before the `fdb_delete` call within the port-down check, it ensures that the FDB entry persists even if the physical link is temporarily lost. This is consistent with the goal of fixing "incorrect connected devices" issues where devices might disappear and reappear in the UI due to FDB entry cycling.
-- **Scope**: The use of `HNI_SUPPORT_COMMON` correctly limits the impact to the relevant Humax-specified platforms (like HP2272B) without affecting other product variants.
-- **Safety**: The `continue` statement is safe within the `hlist_for_each_entry_safe` loop used in `host_list_read_proc`.
-- **Style**: The implementation follows the existing coding style and macro usage patterns found in `ecnt_br.h`.</pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-09 17:10:19 (KST)</div></div></body></html>
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-37] Fix SSH/Telnet access issue when enabled via CWMP</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-87] Fix error server connection failure</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-5][UXD] Home - Attached Devices : Fix incorrect connected devices</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-89] Fix kernel panic issue on dnstrap module</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: RG/dslpon/apollo | Owner: Myungsoo Kim(김명수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-10 08:36:04 (KST)</div></div></body></html>
