@@ -16,7 +16,20 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-80]Fixed: ACS PPP provisioning fail</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">Revert "[ARHT-212] Fix can not display LAN IP Address on Home page."</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### ⚠️ Potential Regression: Re-introducing IP Display Bug
+
+Reverting this patch will likely re-introduce the bug where the LAN IP address fails to display. 
+
+<details>
+<summary>Detailed Technical Analysis</summary>
+
+1. **Incorrect Parsing with `atoi`**: The restored code uses `atoi(pDevList.devList[i].path)`. Since the path strings in this context typically look like `"LAN1"`, `"LAN2"`, etc., `atoi` will encounter the non-numeric 'L' character and return **0**.
+2. **Failed Comparison**: The check `if (0 == (portIndex + 1))` will always be false for any valid `portIndex` (0, 1, 2...), meaning the IP address will never be assigned to `pLanInfo->aPortIP`.
+3. **Why the removed code was better**: The code being removed used `sscanf(pDevList.devList[i].path, "LAN%d", &portIdx)`, which correctly extracts the integer value following the "LAN" prefix, allowing the match `if (portIdx == (portIndex + 1))` to succeed.
+
+</details>
+
+**Recommendation:** Unless this revert is part of a larger architecture change where the `path` format has changed to be purely numeric (e.g., "1", "2"), this revert should be blocked as it breaks the logic for identifying LAN ports.</pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-80]Fixed: ACS PPP provisioning fail</div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
 
 - Potential side effects should be considered.
 - Please verify logic in edge cases.
@@ -40,4 +53,4 @@
 
 - Potential side effects should be considered.
 - Please verify logic in edge cases.
-</details></pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-10 08:36:04 (KST)</div></div></body></html>
+</details></pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-10 13:14:17 (KST)</div></div></body></html>
