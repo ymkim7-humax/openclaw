@@ -1,0 +1,38 @@
+{
+  "Id720b43fbaca0ff91c89d858f8bb8d6e14238e4e_1": {
+    "number": "79825",
+    "subject": "[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall by clamping MSS",
+    "project": "RG/dslpon/apollo",
+    "owner": "Myungsoo Kim",
+    "url": "http://git.humax-networks.com:8080/79825",
+    "ps_num": "1",
+    "timestamp": 1772772429,
+    "verdict": "LGTM",
+    "opinion": "DynDNS update MSS clamping patch.",
+    "patch_content": "No content available."
+  },
+  "I54c566ecc8281f05634debe0f29fbe264b24e75e_2": {
+    "number": "79800",
+    "subject": "[ARHT-55] Optimize: Combine multiple LED control commands into a single execution",
+    "project": "airoha/2025q3",
+    "owner": "Deuckyu Kim",
+    "url": "http://git.humax-networks.com:8080/79800",
+    "ps_num": "2",
+    "timestamp": 1772756545,
+    "verdict": "LGTM",
+    "opinion": "LED control optimization.",
+    "patch_content": "No content available."
+  },
+  "I16c2c45b8b15f0e6b3cf5bd3208fcb19514f5b12_2": {
+    "number": "79808",
+    "subject": "[HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list",
+    "project": "airoha/2025q3",
+    "owner": "Deokwon Kang",
+    "url": "http://git.humax-networks.com:8080/79808",
+    "ps_num": "2",
+    "timestamp": 1772784151,
+    "verdict": "LGTM",
+    "opinion": "Fixed issue where sub router was included in host list by filtering on networkType.",
+    "patch_content": "commit bc10b1ff91f31ff645bd25a8b6231c44b50be13a\nAuthor: DEOKWONKANG <dwkang@humax-networks.com>\nDate:   Thu Mar 5 00:52:15 2026 +0000\n\n    [HP2236BVA-34][TR069] Fix Issue that Sub router included in the Host list\n    \n     - InternetGatewayDevice.LANDevice.1.Hosts\n    \n    Change-Id: I16c2c45b8b15f0e6b3cf5bd3208fcb19514f5b12\n\ndiff --git a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\nindex 232b606233b..215f9761ecf 100644\n--- a/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\n+++ b/tclinux_phoenix/apps/hni/cwmpclient/ext/openwrt/scripts/functions/tr098/lan_device\n@@ -2362,9 +2362,16 @@ hosts_browse_instances() {\n \tlocal client_count\n \tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n \tlocal index_device=$(echo \"$parameter\" | sed -n 's/.*Hosts\\.Host\\.\\([0-9]\\+\\).*/\\1/p')\n+\tlocal host_idx=0\n \n \tfor i in $(seq 0 $((client_count - 1))); do\n-\t\toffset=$((i + 1))\n+\t\tlocal netType\n+\t\tnetType=$(echo \"$result\" | jsonfilter -e \"@.infor[$i].networkType\")\n+\t\t[ \"$netType\" = \"backhaul\" ] && continue\n+\n+\t\thost_idx=$((host_idx + 1))\n+\t\toffset=\"$host_idx\"\n+\n \t\tif [ -n \"$index_device\" ] && [ \"$index_device\" -ne \"$offset\" ]; then\n \t\t\tcontinue\n \t\tfi\n@@ -2420,14 +2427,23 @@ hosts_browse_instances() {\n \n get_HostNumberOfEntries() {\n \tlocal result\n-\t\tresult=$(ubus call hni getLanDeviceList \"{}\" 2>/dev/null)\n-\t\tif [ -z \"$result\" ]; then\n-\t\t\t\treturn 0\n-\t\tfi\n+\tresult=$(ubus call hni getLanDeviceList \"{}\" 2>/dev/null)\n+\tif [ -z \"$result\" ]; then\n+\t\treturn 0\n+\tfi\n+\n+\tlocal client_count\n+\tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n+\n+\tlocal cnt=0\n+\tlocal i netType\n+\tfor i in $(seq 0 $((client_count - 1))); do\n+\t\tnetType=$(echo \"$result\" | jsonfilter -e \"@.infor[$i].networkType\")\n+\t\t[ \"$netType\" = \"backhaul\" ] && continue\n+\t\tcnt=$((cnt + 1))\n+\tdone\n \n-\t\tlocal client_count\n-\t\tclient_count=$(echo \"$result\" | jsonfilter -e '@.number_client')\n-\t\techo $client_count\n+\techo \"$cnt\"\n }\n \n get_lan_device_hostname() {\n"
+  }
+}

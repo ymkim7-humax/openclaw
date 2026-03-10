@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>INTERNAL Gerrit Review Summary</title>
+    <style>
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
+        .review-card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; margin-bottom: 20px; }
+        .badge { padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .lgtm-badge { background: #065f46; color: #34d399; }
+        .detail-badge { background: #1e3a8a; color: #93c5fd; }
+        .subject { font-size: 1.25rem; font-weight: bold; color: #f8fafc; }
+        .meta { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
+        pre { background: #000; padding: 15px; border-radius: 6px; overflow-x: auto; color: #e2e8f0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+        a { color: #3b82f6; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .footer { text-align: center; color: #64748b; font-size: 10px; margin-top: 40px; }
+    </style>
+    </head><body>
+    <div style="max-width: 1000px; margin: auto;">
+        <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
+        <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79870' target='_blank'>Revert "[ARHT-212] Fix can not display LAN IP Address on Home page."</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### ⚠️ Potential Regression: Re-introducing IP Display Bug
+
+Reverting this patch will likely re-introduce the bug where the LAN IP address fails to display. 
+
+<details>
+<summary>Detailed Technical Analysis</summary>
+
+1. **Incorrect Parsing with `atoi`**: The restored code uses `atoi(pDevList.devList[i].path)`. Since the path strings in this context typically look like `"LAN1"`, `"LAN2"`, etc., `atoi` will encounter the non-numeric 'L' character and return **0**.
+2. **Failed Comparison**: The check `if (0 == (portIndex + 1))` will always be false for any valid `portIndex` (0, 1, 2...), meaning the IP address will never be assigned to `pLanInfo->aPortIP`.
+3. **Why the removed code was better**: The code being removed used `sscanf(pDevList.devList[i].path, "LAN%d", &portIdx)`, which correctly extracts the integer value following the "LAN" prefix, allowing the match `if (portIdx == (portIndex + 1))` to succeed.
+
+</details>
+
+**Recommendation:** Unless this revert is part of a larger architecture change where the `path` format has changed to be purely numeric (e.g., "1", "2"), this revert should be blocked as it breaks the logic for identifying LAN ports.</pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79865' target='_blank'>[HP2236BVA-80]Fixed: ACS PPP provisioning fail</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79863' target='_blank'>[HP2236BVA-37] Fix SSH/Telnet access issue when enabled via CWMP</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79827' target='_blank'>[HP2236BVA-87] Fix error server connection failure</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79857' target='_blank'>[ARHT-5][UXD] Home - Attached Devices : Fix incorrect connected devices</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79835' target='_blank'>[ARHT-89] Fix kernel panic issue on dnstrap module</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79825' target='_blank'>[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: RG/dslpon/apollo | Owner: Myungsoo Kim(김명수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-10 13:14:17 (KST)</div></div></body></html>
