@@ -16,41 +16,37 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79870' target='_blank'>Revert "[ARHT-212] Fix can not display LAN IP Address on Home page."</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>### ⚠️ Potential Regression: Re-introducing IP Display Bug
-
-Reverting this patch will likely re-introduce the bug where the LAN IP address fails to display. 
-
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79872' target='_blank'>[BIFROST-20] HP-2272B|HPM-2272B : implement serial leds and led scenario</a></div><span class="badge detail-badge">Comment</span></div><div class="meta">Project: airoha/2025q1 | Owner: Jongrak Kim(김종락)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>### detailed feedback
 <details>
-<summary>Detailed Technical Analysis</summary>
+<summary>Click to expand</summary>
 
-1. **Incorrect Parsing with `atoi`**: The restored code uses `atoi(pDevList.devList[i].path)`. Since the path strings in this context typically look like `"LAN1"`, `"LAN2"`, etc., `atoi` will encounter the non-numeric 'L' character and return **0**.
-2. **Failed Comparison**: The check `if (0 == (portIndex + 1))` will always be false for any valid `portIndex` (0, 1, 2...), meaning the IP address will never be assigned to `pLanInfo->aPortIP`.
-3. **Why the removed code was better**: The code being removed used `sscanf(pDevList.devList[i].path, "LAN%d", &portIdx)`, which correctly extracts the integer value following the "LAN" prefix, allowing the match `if (portIdx == (portIndex + 1))` to succeed.
+- **Kernel Resource Leak**: In `airoha_sgpio_enable` and `airoha_sgpio_enable_rclk`, `ioremap` is called but `iounmap` is only called in one of them (fixed in this patch), but `ioremap` for `SGPIO_ENABLE_REG_OFFSET` (0x1fa2021c) is done every time the functions are called. It would be better to map this once during `probe` or use a shared mapping.
+- **Duplicate labels/nodes**: `an7583_evb_common.dtsi` contains duplicate `thermal_phy: thermal_phy@1efbd000` nodes.
+- **Code Quality**: `airoha_sgpio_wait_for_shift` has a busy-wait loop `while (reg_val & BIT(31))` without a timeout or `cpu_relax()`. This could hang the kernel if the hardware doesn't respond as expected.
+- **Hardcoded addresses**: Many magic numbers/addresses in `sgpio-airoha.c` (e.g., `0x1fa2021c`) should ideally be in the Device Tree or defined as constants in a header.
 
-</details>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79871' target='_blank'>[HP2236BVA-134] Update ONT software version.</a></div><span class="badge detail-badge">Comment</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>### detailed feedback
+<details>
+<summary>Click to expand</summary>
 
-**Recommendation:** Unless this revert is part of a larger architecture change where the `path` format has changed to be purely numeric (e.g., "1", "2"), this revert should be blocked as it breaks the logic for identifying LAN ports.</pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79865' target='_blank'>[HP2236BVA-80]Fixed: ACS PPP provisioning fail</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+- **Potential Command Injection Risk**: The function `update_xpon_sw_version` uses `snprintf` to build a command string and then executes it using `system(cmd)`. While `buffer` is populated via `omci_lib_uci_get`, if that UCI option is ever user-controlled or contains shell metacharacters, it could lead to command injection. 
+- **Redundancy**: Use of `system("uci set ...")` is generally less efficient than using UCI library APIs directly if they are available in the same context.
+- **Error Handling**: `system()` calls do not check return values.
 
-- Potential side effects should be considered.
-- Please verify logic in edge cases.
-</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79863' target='_blank'>[HP2236BVA-37] Fix SSH/Telnet access issue when enabled via CWMP</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
-
-- Potential side effects should be considered.
-- Please verify logic in edge cases.
-</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79827' target='_blank'>[HP2236BVA-87] Fix error server connection failure</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
-
-- Potential side effects should be considered.
-- Please verify logic in edge cases.
-</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79857' target='_blank'>[ARHT-5][UXD] Home - Attached Devices : Fix incorrect connected devices</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79887' target='_blank'>[ARHT-399] Apply patch files for wifi packages into apps/hni/mtk</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Steven</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Bulk update of patch files for wifi packages. Changes appear to be purely administrative/integration related (adding/updating patches in the build system). No immediate red flags in the patch content structure.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79865' target='_blank'>[HP2236BVA-80]Fixed: ACS PPP provisioning fail</a></div><span class="badge detail-badge">CR</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Detailed feedback: <details><summary>Click to expand</summary>
 
 - Potential side effects should be considered.
 - Please verify logic in edge cases.
-</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79835' target='_blank'>[ARHT-89] Fix kernel panic issue on dnstrap module</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79863' target='_blank'>[HP2236BVA-37] Fix SSH/Telnet access issue when enabled via CWMP</a></div><span class="badge detail-badge">CR</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Detailed feedback: <details><summary>Click to expand</summary>
 
 - Potential side effects should be considered.
 - Please verify logic in edge cases.
-</details></pre></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79825' target='_blank'>[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS</a></div><span class="badge detail-badge">DETAILED FEEDBACK</span></div><div class="meta">Project: RG/dslpon/apollo | Owner: Myungsoo Kim(김명수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>Detailed feedback: <details><summary>Click to expand</summary>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79835' target='_blank'>[ARHT-89] Fix kernel panic issue on dnstrap module</a></div><span class="badge detail-badge">CR</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Detailed feedback: <details><summary>Click to expand</summary>
 
 - Potential side effects should be considered.
 - Please verify logic in edge cases.
-</details></pre></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-10 13:14:17 (KST)</div></div></body></html>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79825' target='_blank'>[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS</a></div><span class="badge detail-badge">CR</span></div><div class="meta">Project: RG/dslpon/apollo | Owner: Myungsoo Kim(김명수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Detailed feedback: <details><summary>Click to expand</summary>
+
+- Potential side effects should be considered.
+- Please verify logic in edge cases.
+</details></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-11 09:07:27 (KST)</div></div></body></html>
