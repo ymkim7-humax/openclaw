@@ -1,0 +1,114 @@
+{
+  "HP2272B": [
+    {
+      "timestamp": "2026-03-07 09:59:32",
+      "model": "HP2272B",
+      "git_hash": "6732d3e9b",
+      "linux_size": 59084800,
+      "rootfs_files": 4291,
+      "linux_file": "hp2272b_tclinux_20260307_034000.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-03-07 03:40:35",
+      "model": "HP2272B",
+      "git_hash": "Unknown",
+      "linux_size": 0,
+      "rootfs_files": 0,
+      "linux_file": "FAILED",
+      "changes": "src/FalNetwork.cpp: undefined macro HNI_VAL_WAN_SERVICE_INTERNET_TR069"
+    },
+    {
+      "timestamp": "2026-03-06 05:08:11",
+      "model": "HP2272B",
+      "git_hash": "6732d3e9b",
+      "linux_size": 59088896,
+      "rootfs_files": 4291,
+      "linux_file": "hp2272b_tclinux_20260306_030002.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-03-05 04:47:22",
+      "model": "HP2272B",
+      "git_hash": "6732d3e9b",
+      "linux_size": 59080704,
+      "rootfs_files": 4291,
+      "linux_file": "hp2272b_tclinux_20260305_041217.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-02-27 16:35:44",
+      "model": "HP2272B",
+      "git_hash": "6732d3e9b",
+      "linux_size": 59011072,
+      "rootfs_files": 4291,
+      "linux_file": "hp2272b_tclinux_20260227_100207.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-02-25 21:58:37",
+      "model": "HP2272B",
+      "git_hash": "6732d3e9b",
+      "linux_size": 59011072,
+      "rootfs_files": 4291,
+      "linux_file": "hp2272b_tclinux_20260225_195053.bin",
+      "changes": null
+    }
+  ],
+  "HP2236B": [
+    {
+      "timestamp": "2026-03-07 03:40:14",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57761792,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260307_030525.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-03-06 05:07:57",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57761792,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260306_030002.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-03-05 04:47:11",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57757696,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260305_041217.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-03-03 12:14:11",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57765888,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260303_114047.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-02-27 10:30:31",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57708544,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260227_100207.bin",
+      "changes": null
+    },
+    {
+      "timestamp": "2026-02-25 21:58:16",
+      "model": "HP2236B",
+      "git_hash": "b8cf11734",
+      "linux_size": 57720832,
+      "rootfs_files": 4311,
+      "linux_file": "hp2236b_tclinux_20260225_195053.bin",
+      "changes": null
+    }
+  ]
+}
