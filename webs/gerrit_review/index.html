@@ -16,277 +16,43 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-103] Fix AdvanceSetup > Mirror</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q1 | Owner: Yeongman Kim(김영만)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-257][AIS]InternetGatewayDevice.DeviceInfo. : Fix ModelName</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-103] Fix AdvanceSetup > Mirror</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Yeongman Kim(김영만)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-55] cleanup LED define macros in hal_other.h</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-312] cwmp: InternetGatewayDevice.X_AIS_UplinkSetup</div><span class="badge detail-badge">Commented</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>
 
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
+### General Observations
+This is a significant feature addition for TR-069 Uplink management. While functional, there are several areas in the shell scripts and C code that could be hardened.
 
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
+### 1. Shell Script: `X_AIS_UplinkSetup`
+*   **Brittle Parsing:** In `get_X_AIS_UplinkSetup_UplinkStatus`, the use of `cut -d ' ' -f 2` on `/proc/xpon/ponInfo` output is sensitive to the number of spaces. If the driver output format changes slightly, this will break. Consider using `awk` or a more robust regex-based extraction.
+*   **Quoting:** Several variables and command substitutions are unquoted. For example, `kill -USR1 $pid` should be `kill -USR1 "$pid"` and `$UCI_SET dualuplink.common.allow_admin=$new_value` should have quotes around the value to handle potential special characters or empty strings.
 
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
+### 2. C Code: `blapi_traffic_cmd.c`
+*   **Debug Print Clutter:** You added `printf("%s=%s, link_rate = %s\n", ...)` which seems intended for CLI output. Ensure this doesn't clutter system logs or interfere with other tools parsing the output of this command.
 
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-55] cleanup LED define macros in hal_other.h</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
+### 3. C Code: `dualuplink_set.c`
+*   **Input Validation:** `set_mode` uses `atoi(value)` directly. If `value` is not a numeric string, `atoi` returns 0, which is a valid mode (PON-ETH). This might lead to unexpected behavior if junk data is passed via UBUS. Use `strtol` for better validation.
+*   **Error Handling:** In `set_enable`, if `HalNetwork_getDualUplink` fails, the function returns -1 but doesn't log a specific reason other than a general error. Given this is a state-changing operation, more specific logging would help debugging field issues.
 
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-134] Update ONT software version.</div><span class="badge detail-badge">Commented</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>
 
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
+### Potential Issues
 
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
+### 1. Buffer Overflow / Truncation
+In `omci_get_sw_version`, `buffer` is 16 bytes and `sw_version` (the destination) is also 16 bytes. When you use `snprintf(sw_version, size, "HNI-%s", buffer)`, the prefix "HNI-" (4 bytes) plus the version string from the file will likely exceed 16 bytes. This will result in the version being truncated, possibly losing critical version info.
 
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-98][TR069] LAN IPv6 type not change when set DHCPv6.Server.Pool.1.Enable</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
+### 2. Performance: Excessive `system()` calls
+In `omci_image_read_state`, you are calling `system("uci set ...")` over 10 times in a row. Each `system()` call forks a shell, which is extremely heavy for an embedded system. 
+*   **Recommendation:** Use the `uci` C library directly (e.g., `uci_set`, `uci_commit`) which is already available in the environment, or concatenate the commands into a single shell script execution.
 
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
+### 3. Logic: Default Version
+If `/etc/fw_info/version` is empty, `buffer[0]` will be `\0` and you default to `HNI-SW-V1.0`. However, if the file contains only a newline, `strcspn` will make it an empty string, which is handled, but it's worth verifying if this file is guaranteed to exist and have a specific format.
 
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-89] Fix kernel panic issue on dnstrap module</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[BIFROST-65] migration LED SPIO driver and apps</div><span class="badge detail-badge">Commented</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>
 
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
+### 1. Driver Performance & Safety (`sgpio-airoha.c`)
+*   **Resource Management:** `airoha_sgpio_enable` and `airoha_sgpio_enable_rclk` perform `ioremap` and `iounmap` on every call. This is inefficient. These registers should be remapped once during probe.
+*   **Busy Wait:** `airoha_sgpio_wait_for_shift` has a busy-wait loop `while (reg_val & BIT(31))`. This could hang the kernel if the hardware doesn't respond. Should have a timeout.
 
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-37] Fix SSH/Telnet access issue when enabled via CWMP</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
+### 2. PWM Driver (`pwm-airoha.c`)
+*   **Pin Range Validation:** Ensure `SGPIO_BASE + MAX_SGPIO_PINS` doesn't overlap with existing GPIO ranges or cause out-of-bounds access in arrays like `gen_wave_state`.
 
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
-
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
-
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
-
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[BIFROST-65] migration LED SPIO driver and apps</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
-
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
-
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
-
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
-
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-176] get_wmm(), set_wmm()</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
-
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
-
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
-
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
-
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-134] Update ONT software version.</div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
-Usage: gemini [options] [command]
-
-Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
-
-Commands:
-  gemini [query..]             Launch Gemini CLI  [default]
-  gemini mcp                   Manage MCP servers
-  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
-  gemini skills <command>      Manage agent skills.  [aliases: skill]
-  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
-
-Positionals:
-  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
-
-Options:
-  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
-  -m, --model                     Model  [string]
-  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
-  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
-  -s, --sandbox                   Run in sandbox?  [boolean]
-  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
-      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
-      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
-      --experimental-acp          Starts the agent in ACP mode  [boolean]
-      --allowed-mcp-server-names  Allowed MCP server names  [array]
-      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
-  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
-  -l, --list-extensions           List all available extensions and exit.  [boolean]
-  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
-      --list-sessions             List available sessions for the current project and exit.  [boolean]
-      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
-      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
-      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
-  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
-      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
-      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
-  -v, --version                   Show version number  [boolean]
-  -h, --help                      Show help  [boolean]
-</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-12 17:21:22 (KST)</div></div></body></html>
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[EUSW-515][APOLLO] Work around DynDNS DDNS TLS stall (WAN egress drop/PMTUD blackhole) by clamping MSS</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: RG/dslpon/apollo | Owner: Myungsoo Kim(김명수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-13 09:10:49 (KST)</div></div></body></html>
