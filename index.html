@@ -16,4 +16,82 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79978' target='_blank'>[ARHT-138] Fix the issues of mesh topology.</a></div><span class="badge detail-badge">Comment</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>In `FalGateway.cpp`, `pstIntf` is accessed using `atoi(pDevList.devList[i].path) - 1`. If `path` is not a valid integer or out of bounds (0 or > MAX_ETHERNET_PORT_NUMBER), this will cause a memory access violation or crash. Recommend adding bounds checking before access.</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79871' target='_blank'>[HP2236BVA-134] Update ONT software version.</a></div><span class="badge detail-badge">Comment</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>1. `omci_get_sw_version` uses `fgets` on a 16-byte buffer. If the version string in `/etc/fw_info/version` is longer, it will be truncated. 2. Multiple `system()` calls are used with `uci set`. While the input seems somewhat controlled, using a direct UCI API would be safer and more efficient than forking multiple processes.</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80065' target='_blank'>[HP2236BVA-38] zerotouch app need telnet prompt to end with '$'</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79984' target='_blank'>[ARHT-64] Implement On Top Easy Mesh</a></div><span class="badge detail-badge">Comment</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Feedback</summary>1. Massive new application `ontopmesh` added. 2. Multiple `system()` calls in `FalMesh.cpp` (e.g., `rm -f`, `ls ... >> ...`) and `hni_otmesh_main.cpp`. This is prone to shell injection if any filenames/paths could be influenced by external input. 3. `otmesh_update_sta_info` uses `popen` with a hardcoded command, but then uses `sscanf` on the output - ensure the output format is guaranteed. 4. `HalMesh_applyOnTopMesh` forks and calls `HalUtils_cmdExec` to restart wifi. This is a heavy operation; ensure it is rate-limited and consider user impact during network restarts.</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79974' target='_blank'>[ARHT-405] CWMP: Increase GET request speed</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79835' target='_blank'>[ARHT-89] Fix kernel panic issue on dnstrap module</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>The fix correctly addresses the kernel panic by verifying that an Ethernet header actually exists (checked by comparing the offset between the IP header and the Ethernet header) before attempting to access/modify it. This is a critical safety check for packets coming from non-Ethernet interfaces like PPP.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79968' target='_blank'>[ARHT-257][AIS]InternetGatewayDevice.DeviceInfo. : Fix ModelName</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>분석 중입니다...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-14 13:01:12 (KST)</div></div></body></html>
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80069' target='_blank'>[ARHT-176] HalWifi_setRadio() - NEED_TO_SEPARATE</a></div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
+Usage: gemini [options] [command]
+
+Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
+
+Commands:
+  gemini [query..]             Launch Gemini CLI  [default]
+  gemini mcp                   Manage MCP servers
+  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
+  gemini skills <command>      Manage agent skills.  [aliases: skill]
+  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
+
+Positionals:
+  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
+
+Options:
+  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
+  -m, --model                     Model  [string]
+  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
+  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
+  -s, --sandbox                   Run in sandbox?  [boolean]
+  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
+      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
+      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
+      --experimental-acp          Starts the agent in ACP mode  [boolean]
+      --allowed-mcp-server-names  Allowed MCP server names  [array]
+      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
+  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
+  -l, --list-extensions           List all available extensions and exit.  [boolean]
+  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
+      --list-sessions             List available sessions for the current project and exit.  [boolean]
+      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
+      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
+      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
+  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
+      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
+      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
+  -v, --version                   Show version number  [boolean]
+  -h, --help                      Show help  [boolean]
+</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80070' target='_blank'>[HP2236BVA-45] [Wireless] Bandwidth works wrongly when change to 40MHz</a></div><span class="badge detail-badge">Needs Work</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Error analyzing patch: Unknown argument: file
+Usage: gemini [options] [command]
+
+Gemini CLI - Defaults to interactive mode. Use -p/--prompt for non-interactive (headless) mode.
+
+Commands:
+  gemini [query..]             Launch Gemini CLI  [default]
+  gemini mcp                   Manage MCP servers
+  gemini extensions <command>  Manage Gemini CLI extensions.  [aliases: extension]
+  gemini skills <command>      Manage agent skills.  [aliases: skill]
+  gemini hooks <command>       Manage Gemini CLI hooks.  [aliases: hook]
+
+Positionals:
+  query  Initial prompt. Runs in interactive mode by default; use -p/--prompt for non-interactive.
+
+Options:
+  -d, --debug                     Run in debug mode (open debug console with F12)  [boolean] [default: false]
+  -m, --model                     Model  [string]
+  -p, --prompt                    Run in non-interactive (headless) mode with the given prompt. Appended to input on stdin (if any).  [string]
+  -i, --prompt-interactive        Execute the provided prompt and continue in interactive mode  [string]
+  -s, --sandbox                   Run in sandbox?  [boolean]
+  -y, --yolo                      Automatically accept all actions (aka YOLO mode, see https://www.youtube.com/watch?v=xvFZjo5PgG0 for more details)?  [boolean] [default: false]
+      --approval-mode             Set the approval mode: default (prompt for approval), auto_edit (auto-approve edit tools), yolo (auto-approve all tools), plan (read-only mode)  [string] [choices: "default", "auto_edit", "yolo", "plan"]
+      --policy                    Additional policy files or directories to load (comma-separated or multiple --policy)  [array]
+      --experimental-acp          Starts the agent in ACP mode  [boolean]
+      --allowed-mcp-server-names  Allowed MCP server names  [array]
+      --allowed-tools             [DEPRECATED: Use Policy Engine instead See https://geminicli.com/docs/core/policy-engine] Tools that are allowed to run without confirmation  [array]
+  -e, --extensions                A list of extensions to use. If not provided, all extensions are used.  [array]
+  -l, --list-extensions           List all available extensions and exit.  [boolean]
+  -r, --resume                    Resume a previous session. Use "latest" for most recent or index number (e.g. --resume 5)  [string]
+      --list-sessions             List available sessions for the current project and exit.  [boolean]
+      --delete-session            Delete a session by index number (use --list-sessions to see available sessions).  [string]
+      --include-directories       Additional directories to include in the workspace (comma-separated or multiple --include-directories)  [array]
+      --screen-reader             Enable screen reader mode for accessibility.  [boolean]
+  -o, --output-format             The format of the CLI output.  [string] [choices: "text", "json", "stream-json"]
+      --raw-output                Disable sanitization of model output (e.g. allow ANSI escape sequences). WARNING: This can be a security risk if the model output is untrusted.  [boolean]
+      --accept-raw-output-risk    Suppress the security warning when using --raw-output.  [boolean]
+  -v, --version                   Show version number  [boolean]
+  -h, --help                      Show help  [boolean]
+</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-14 17:10:09 (KST)</div></div></body></html>
