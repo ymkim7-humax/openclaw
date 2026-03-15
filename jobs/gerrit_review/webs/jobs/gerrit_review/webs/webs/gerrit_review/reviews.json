@@ -1,0 +1,46 @@
+{
+  "I7f1d3afd30c218574dda483dce170fcb3e68695f_1": {
+    "number": "79693",
+    "subject": "[ARHT-182] Adjust boot sequence",
+    "project": "airoha/2025q3",
+    "owner": "Yeongman Kim(\uae40\uc601\ub9cc)",
+    "url": "http://git.humax-networks.com:8080/79693",
+    "ps_num": "1",
+    "timestamp": 1772182994,
+    "verdict": "Detailed Feedback",
+    "opinion": "### Boot Sequence Reordering Analysis\n\n**Pros:**\n- LAN/PON \uc6b0\uc120 \uc2dc\uc791\uc744 \ud1b5\ud574 \ub124\ud2b8\uc6cc\ud06c \uc5f0\uacb0 \uc131\ub9bd \uc14d\uc158\uc744 \uc55e\ub2f9\uae40.\n- `dnsmasq` \ucd5c\uc801\ud654(`noping`, `force`) \ubc0f `BOOT` \ud50c\ub7ec\uadf8 \uc81c\uac70\ub85c DHCP \uc11c\ube44\uc2a4 \uc751\ub2f5 \uc14d\uc158 \ub2e8\ucd55.\n\n**Risks & Suggestions:**\n1. **Dropbear/uhttpd (START=99):** \ub9e8 \ub9c8\uc9c0\ub9c9\uc73c\ub85c \ubc00\ub824\ub0ac\uc2b5\ub2c8\ub2e4. \ub9cc\uc57d \ubd80\ud305 \uc911\uac04\uc5d0 \uc11c\ube44\uc2a4 \ud504\ub85c\uc138\uc2a4\uac00 \ud56d(Hang) \ub418\uba74 Telnet/SSH \uc811\uc1cd\uc774 \uc548 \ub418\uc5b4 \ub514\ubc84\uae45\uc774 \ud798\ub4e4 \uc218 \uc788\uc2b5\ub2c8\ub2e4. \ud14c\uc2a4\ud2b8 \ubc84\uc804\uc5d0\uc11c\ub294 \uc870\uae08 \ub2f9\uae30\ub294 \uac83\uc744 \uac8c\ud1a0.\n2. **wait_lanup (START=23):** `ubus call`\uc744 loop\ub85c \ub3cc\ub9ac\ub294\ub370, \ucd5c\ub300 \ud0c0\uc784\uc544\uc6c3 \uc124\uc815\uc774 \uc5c6\uc5b4 \ub124\ud2b8\uc6cc\ud06c \uce39\uc14b \ucd08\uae30\ud654 \uc2e4\ud328 \uc2dc \ubd80\ud305 \uc2dc\ud000\uc2a4 \uc804\uccb4\uac00 \uba48\ucd9c \uc218 \uc788\uc2b5\ub2c8\ub2e4."
+  },
+  "If0cf7cfda4595f8a920bf86b6655deae459d7634_1": {
+    "number": "79690",
+    "subject": "[ARHT-396][HP-2236B]Issue where WAN Service list defaults to \"TR069_INTERNET\" for clay",
+    "project": "RG/frontend/clay",
+    "owner": "Moonseong Choi(\ucd5c\ubb38\uc131)",
+    "url": "http://git.humax-networks.com:8080/79690",
+    "ps_num": "1",
+    "timestamp": 1772182665,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "Ifb6e0db9e44a6e2d35b1798dfc8355e8b4b7e10c_2": {
+    "number": "79689",
+    "subject": "[ARHT-396][HP-2236B]Issue where WAN Service list defaults to \"TR069_INTERNET\"",
+    "project": "airoha/2025q3",
+    "owner": "Moonseong Choi(\ucd5c\ubb38\uc131)",
+    "url": "http://git.humax-networks.com:8080/79689",
+    "ps_num": "2",
+    "timestamp": 1772182646,
+    "verdict": "LGTM",
+    "opinion": "LGTM"
+  },
+  "I1a65f5d0d9314e566652d9848e146f5bd6e41dee_7": {
+    "number": "79652",
+    "subject": "[ARHT-333] Implement R_CPE7 Diagnostics - HTTP",
+    "project": "airoha/2025q3",
+    "owner": "[Marusys VINA] Ray",
+    "url": "http://git.humax-networks.com:8080/79652",
+    "ps_num": "7",
+    "timestamp": 1772183759,
+    "verdict": "Detailed Feedback",
+    "opinion": "### HTTP Diagnostics Implementation Analysis\n\n**Observations:**\n- `FalUtil_string_validate` \ub3c4\uc785\uc73c\ub85c \uc0ac\uc6a9\uc790 \uc785\ub825\uac12(URL) \uac80\uc99d \ub85c\uc9c1 \uac15\ud654.\n- `wa_build_rcpe7_device_payload` \ubd84\ub9ac\ub85c \ucf54\ub4dc \uac00\ub3c5\uc131 \ud5a5\uc0c1.\n\n**Concerns:**\n1. **Security (Command Injection):** `system(cmd)`\ub97c \uc0ac\uc6a9\ud558\uc5ec `curl`\uc744 \ud638\uc2ec\ud569\ub2c8\ub2e4. \uac80\uc99d \ub85c\uc9c1\uc774 \uc788\ub354\ub77c\ub3c4 `execl` \ub610\ub294 `POSIX spawn` \uacc4\uc5f4 \ud568\uc218\ub97c \uc0ac\uc6a9\ud558\uc5ec shell \uba54\ud0c0 \ubb38\uc790 \ud574\uc11d \uc704\ud5d8\uc744 \uc6d0\ucccc \ucc28\ub2e8\ud558\ub294 \uac83\uc744 \uad8c\uc7a5\ud569\ub2c8\ub2e4.\n2. **Parsing Logic:** `extracted_domain` \ucd94\ucd9c \uc2dc `strstr`\uacfc fix offset(`strlen(\"http://\")`)\uc744 \uc0ac\uc6a9\ud558\ub294\ub370, `HTTP://`(\ub300\ubb38\uc790) \ub098 Port \ubc88\ud638\uac00 \ud3ec\ud568\ub41c \uacbd\uc6b0 \uc624\ub3d9\uc791 \uac00\ub2a5\uc131\uc774 \uc788\uc2b5\ub2c8\ub2e4.\n3. **Memory:** `TreeMapObject` \ud3ec\uc778\ud130 \ucc98\ub9ac \uc2dc `root->set` \ubc29\uc2dd\uc73c\ub85c \ubcc0\uacbd\ub418\uc5c8\ub294\ub370, stack \ubcc0\uc218\uc778 `payload`\uc758 lifecycle\uc744 \ub2e4\uc2dc \ud655\uc778\ud574\uc57c \ud569\ub2c8\ub2e4."
+  }
+}

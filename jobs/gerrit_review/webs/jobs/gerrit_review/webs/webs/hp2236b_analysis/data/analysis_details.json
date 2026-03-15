@@ -1,0 +1,30 @@
+{
+  "G1: TR-069 & Management": {
+    "cwmp.c": "Implementation of CWMP (TR-069) specification. Handles core events like bootstrap, periodic updates, and retry mechanisms for ACS communication.",
+    "http.c": "HTTP client layer utilizing CURL. Manages SSL certificates, URL redirects, and robust data transfer to the ACS.",
+    "xml.c": "XML parsing and generation using microxml. Defines standard and vendor-specific fault codes (9000-9005) for protocol compliance.",
+    "ubus.c": "Ubus messaging daemon. Provides the interface for internal system notifications and inter-process communication within the CWMP stack.",
+    "config.c": "UCI configuration handler. Maps OpenWrt style config files to internal EasyCWMP variables and manages default service states."
+  },
+  "G2: HNI Middleware & HAL": {
+    "aisbackup.c": "AIS server-side configuration backup and recovery logic. Implements curl-based upload/download triggered by TR-069 or WebGUI.",
+    "svcboot.c": "Unified service booting sequence controller. Manages the initialization order of firmware info, port forwarding, and parental control services.",
+    "hal_voice.c": "VoIP service management layer. Monitors WAN status and triggers /etc/init.d/voip reload with updated IP/Protocol info (IPv4/v6).",
+    "hal_pon.c": "PON state retrieval logic. Parses /proc/xpon/ponInfo and manages OMCI configuration commands via omcicfgCmd.",
+    "hal_wifi.c": "WiFi configuration mapping for 802.11ax/be. Synchronizes bandwidth and PHY settings with SDK-specific hardware constants.",
+    "hal_system.c": "System health and board monitoring. Tracks CPU thermal data and retrieves board-level metadata via ubus system calls."
+  },
+  "G3: Airoha Drivers": {
+    "mt_wifi7/": "MediaTek/Airoha WiFi 7 driver stack. Manages MLO (Multi-Link Operation), high-order QAM, and hardware-offloaded MAC processing.",
+    "npu/": "Network Processing Unit driver. Handles hardware flow acceleration (PPE) and QDMA-based packet routing to bypass CPU for high-speed traffic.",
+    "fe/": "Frame Engine driver. Manages the ingress/egress of Ethernet frames and integrates with the hardware switch fabric."
+  },
+  "G4: Native Kernel & Core": {
+    "linux-5.4.55/": "Base kernel configuration. Optimized for Aarch64 Cortex-A53 with custom patches for memory management and SMP load balancing in embedded environments.",
+    "libc/": "Musl-based C library implementation. Light-weight alternative to glibc, providing system call wrappers and thread management for the build-dir."
+  },
+  "G5: Boot Infrastructure": {
+    "tcboot/": "Primary bootloader logic. Manages SPI/eMMC flash initialization, hardware sanity checks, and handoff to ARM Trusted Firmware (ATF).",
+    "atf/": "ARM Trusted Firmware implementation. Provides secure world execution environment and manages power states (PSCI) before OS handover."
+  }
+}
