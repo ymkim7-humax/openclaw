@@ -16,74 +16,20 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-45] hal_unify: HalWifi_getSgi(), HalWifi_setSgi</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-257][AIS]InternetGatewayDevice.DeviceInfo. : Fix ModelName</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deokwon Kang(강덕원)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-45] hal_unify: wmm, separate to each api,</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-97] move system config file to under HP2272B/HPM2272B folder</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q1 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-107] wa_vendor_load_mqtt_config() - set log level to info</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-45] hal_unify: MAX_BINDING_SSID_COUNT</div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>이 패치에 대한 코드 리뷰 결과입니다. `MAX_SSID_NUMBER`를 `MAX_BINDING_SSID_COUNT`로 변경하는 과정에서 몇 가지 확인이 필요한 사항과 잠재적인 문제가 발견되었습니다.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-88] Fix the display values of AdminPassword and SuperAdminPassword on ACS.</div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>보안 측면에서 올바른 방향의 수정이나, **이 함수를 내부적으로 호출하는 다른 컴포넌트가 없는지 최종 확인**이 필요합니다.<details><summary>Feedback</summary>
 
-<details><summary>상세 리뷰 보기</summary>
+### 1. 보안성 향상 (긍정적)
+* **비밀번호 노출 방지:** 기존 코드에서 `AdminPassword`와 `SuperAdminPassword`를 조회할 때 실제 값을 반환하거나 기본값(`aisadmin`, `fibre...`)을 반환하던 것을 빈 문자열(`""`)로 변경한 것은 보안상 바람직합니다.
+* **TR-069 표준 준수:** CWMP(TR-069) 프로토콜에서 비밀번호 관련 파라미터는 보안을 위해 Get 요청 시 빈 문자열을 반환(Write-Only)하는 것이 일반적인 관례입니다.
 
-#### 1. `MAX_BINDING_SSID_COUNT` 정의의 적절성 (`hal_wifi.h`)
-```cpp
-+#define MAX_BINDING_SSID_COUNT        SSID_ID_5G_GUEST3
-```
-*   **문제점:** 일반적으로 `SSID_ID_5G_GUEST3`가 Enum의 마지막 항목을 나타내는 인덱스라면, 배열의 크기나 루프의 한계값으로 사용할 때 **총 개수(Count)**가 맞는지 확인해야 합니다. 만약 Enum이 0부터 시작한다면 실제 개수는 `SSID_ID_5G_GUEST3 + 1`이 되어야 할 가능성이 높습니다.
-*   **권장 사항:** `SSID_ID_5G_GUEST3`의 정의를 확인하여, 배열 크기로 사용하기에 충분한 값인지(OOB: Out Of Bounds 발생 여부) 확인하십시오. 보통 `MAX_..._COUNT`는 실제 개수를 의미하도록 정의하거나 `LAST_ENUM_VALUE + 1`로 정의하는 것이 안전합니다.
+### 2. 기술적 검토 및 개선 사항
+* **비정상적인 문자열 제거:** 기존 코드의 `get_SuperAdminPassword`에 포함되어 있던 매우 긴 빌드 경로 및 파일 목록 문자열(`fibre @jobs/auto_build/...`)은 소스 코드에 포함되어서는 안 될 잘못된 데이터로 보입니다. 이를 제거한 것은 적절합니다.
+* **영향도 확인:** 이 스크립트가 ACS(CWMP) 전용인지, 아니면 내부의 다른 시스템에서도 사용되는지 확인이 필요합니다. 만약 다른 내부 로직에서 이 함수를 호출하여 실제 비밀번호를 가져와야 한다면 기능 장애가 발생할 수 있습니다.
+* **데이터 모델 정의와의 일치:** 해당 파라미터가 TR-098 또는 TR-181 데이터 모델 정의에서 `Write-Only`로 설정되어 있는지 확인하십시오. 단순히 빈 문자열을 반환하는 것보다, 데이터 모델 레벨에서 보안 속성을 정의하는 것이 더 근본적인 해결책입니다.
 
-#### 2. `hal_params.h` 내의 무관한 정의 삭제
-```cpp
--#define ATTR_DHCP_LAN_DHCPV6_PD                         "dhcpv6_pd"
--#define ATTR_DHCP_LAN_RA_LIFETIME                       "ra_lifetime"
-...
--#define ATTR_DHCP_LAN_PREFIX_FILTER                     "prefix_filter"
--#define ATTR_DHCP_LAN_LINK_AGGREGATION                  "link_aggregation"
-```
-*   **문제점:** 패치의 주제인 `MAX_BINDING_SSID_COUNT`와 관련이 없어 보이는 DHCP 및 Link Aggregation 관련 매크로들이 삭제되었습니다.
-*   **확인 필요:** 이 매크로들이 실제로 프로젝트 전체에서 더 이상 사용되지 않는 것인지, 아니면 실수로 삭제된 것인지 확인이 필요합니다. 만약 다른 작업의 일부라면 커밋을 분리하거나 이유를 명시해야 합니다.
+### 3. 커밋 메시지 보완 권고
+* **'Fix the display values'의 모호성:** 커밋 메시지에서 "Display value를 수정한다"고만 되어 있는데, 구체적으로 "보안 강화를 위해 ACS 조회 시 비밀번호를 마스킹(빈 문자열 반환) 처리함"과 같이 의도를 명확히 기재하는 것이 좋습니다.
 
-#### 3. 헤더 의존성 확인
-*   `MAX_BINDING_SSID_COUNT`는 `hal_wifi.h`에 정의되어 있습니다.
-*   이 매크로를 사용하는 `hal_network.h`, `wa_publish_api.cpp`, `wa_set_api.cpp`, `FalNetwork.cpp` 등에서 `hal_wifi.h`가 적절히 include 되어 있는지 확인이 필요합니다. 기존에 `hal_params.h`를 참조하던 곳들이 `hal_wifi.h`를 직접 참조하지 않아 빌드 에러가 발생할 수 있습니다.
-
-#### 4. 데이터 정합성 (기존 설정값과의 호환성)
-*   `MAX_SSID_NUMBER`는 기존에 `8`로 정의되어 있었습니다.
-*   `MAX_BINDING_SSID_COUNT` (`SSID_ID_5G_GUEST3`)가 8보다 작아질 경우, 기존에 저장된 설정(Config)에서 8번 SSID 등에 접근하려 할 때 데이터 유실이나 루프 범위 축소로 인한 오동작이 발생할 수 있습니다.
-*   반대로 8보다 커질 경우, 기존의 고정된 크기의 버퍼나 DB 스키마와 충돌이 없는지 검토해야 합니다.
-
-### 요약
-`MAX_BINDING_SSID_COUNT`의 실제 숫자 값이 배열 크기와 루프 조건에 부합하는지(Index vs Count) 재확인하시기 바라며, `hal_params.h`에서 삭제된 무관한 매크로들에 대한 의도적인 삭제 여부를 검토해 주시기 바랍니다.
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-125] Default WLAN 5G(SSID5) Encryption Type is AES</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-45] hal_unify: tcp, upd, tcp/udp</div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I have analyzed the Gerrit patch and found several issues that need to be addressed. While the general unification of protocol strings is a good direction, there are inconsistencies, typos, and potentially breaking changes.
-
-<details><summary>Detailed Review</summary>
-
-### 1. Typo in Commit Message
-The subject line contains a typo: `upd` should be `udp`.
-- **Current:** `[ARHT-45] hal_unify: tcp, upd, tcp/udp`
-- **Recommended:** `[ARHT-45] hal_unify: tcp, udp, tcp/udp`
-
-### 2. Unexplained Removal of VLAN Attributes
-In `hal_params.h`, the following macros were removed:
-```cpp
--#define ATTR_WAN_VLAN_DEI                       "vlan_dei"
--#define ATTR_WAN_VLAN_TPID                      "vlan_tpid"
-```
-These removals seem unrelated to the unification of protocol strings (TCP/UDP). If these attributes are still used in other parts of the codebase, this change will cause compilation errors. If they are truly deprecated, this should be mentioned in the commit message or handled in a separate "cleanup" task.
-
-### 3. Inconsistent Logic in `HalService_getPortForwarding`
-In `hal_service.c`, the refactoring of the configuration retrieval logic is inconsistent:
-```cpp
-+    if (HalConfig_get(nodeName, OPTION_ENABLED, active, sizeof(active)) != HAL_SUCCESS ||
-+        HalConfig_get(nodeName, OPTION_PROTOCOL, protocol, sizeof(protocol)) != HAL_SUCCESS ||
-+        ...
-+        HalConfig_get(nodeName, OPTION_SERVICE_TYPE, serviceType, sizeof(serviceType))) // <-- Missing != HAL_SUCCESS
-```
-The last condition is missing `!= HAL_SUCCESS`. While it might evaluate to "true" on failure (assuming `HAL_SUCCESS` is 0 and failure is non-zero), it is inconsistent with the preceding lines and makes the code harder to maintain.
-
-### 4. Code Cleanup Opportunity in `HalService_getPortForwarding`
-The refactored block in `HalService_getPortForwarding` has a logic change:
-- **Original:** Checked if all `HalConfig_get` calls succeeded before proceeding.
-- **New:** Returns `HAL_FAILURE` if any call fails.
-This is a good improvement in terms of readability (reducing indentation), but ensure that the remaining logic (setting `pstPortMapping` fields) is only reached when all config gets are successful. The current implementation correctly does this, but the inconsistency mentioned in point #3 should be fixed.
-
-### Summary of Recommended Actions
-1. Fix the typo in the commit subject.
-2. Verify if `ATTR_WAN_VLAN_DEI` and `ATTR_WAN_VLAN_TPID` are still needed. If not, explain their removal in the commit message.
-3. Add `!= HAL_SUCCESS` to the last condition in the `if` statement within `HalService_getPortForwarding`.
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-138] Fix the issues of mesh topology.</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-134] Update ONT software version.</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-64] Implement On Top Easy Mesh</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-405] CWMP: Increase GET request speed</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-89] Fix kernel panic issue on dnstrap module</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-16 13:11:15 (KST)</div></div></body></html>
+### 결론
+보안 측면에서 올바른 방향의 수정이나, **이 함수를 내부적으로 호출하는 다른 컴포넌트가 없는지 최종 확인**이 필요합니다. 또한, 원본 코드에 왜 비정상적인 경로 문자열이 포함되어 있었는지에 대한 원인 파악이 병행되면 향후 유사 사례 방지에 도움이 될 것입니다.
+</details></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-16 17:04:28 (KST)</div></div></body></html>
