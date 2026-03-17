@@ -16,20 +16,40 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80086' target='_blank'>[HP2236BVA-88] Fix the display values of AdminPassword and SuperAdminPassword on ACS.</a></div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>보안 측면에서 올바른 방향의 수정이나, **이 함수를 내부적으로 호출하는 다른 컴포넌트가 없는지 최종 확인**이 필요합니다.<details><summary>Feedback</summary>
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79978' target='_blank'>[ARHT-138] Fix the issues of mesh topology.</a></div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>### Gerrit Patch Analysis Results
 
-### 1. 보안성 향상 (긍정적)
-* **비밀번호 노출 방지:** 기존 코드에서 `AdminPassword`와 `SuperAdminPassword`를 조회할 때 실제 값을 반환하거나 기본값(`aisadmin`, `fibre...`)을 반환하던 것을 빈 문자열(`""`)로 변경한 것은 보안상 바람직합니다.
-* **TR-069 표준 준수:** CWMP(TR-069) 프로토콜에서 비밀번호 관련 파라미터는 보안을 위해 Get 요청 시 빈 문자열을 반환(Write-Only)하는 것이 일반적인 관례입니다.
+1. **`FalGateway.cpp` Potential Crash Hazard**:
+   - The code `pstIntf[atoi(pDevList.devList[i].path) - 1]` contains a high risk of **Segmentation Fault (Crash)**.
+   - If `path` is not a numeric string (e.g., "lan", "2.4g") or if the value is out of the bounds of `pstIntf` (0 or >= MAX_ETHERNET_PORT_NUMBER), an out-of-bounds array access will occur.
+   - Specifically, for Wi-Fi connected devices, accessing the Ethernet port status array (`pstIntf`) using `path` as an index is logically incorrect.
 
-### 2. 기술적 검토 및 개선 사항
-* **비정상적인 문자열 제거:** 기존 코드의 `get_SuperAdminPassword`에 포함되어 있던 매우 긴 빌드 경로 및 파일 목록 문자열(`fibre @jobs/auto_build/...`)은 소스 코드에 포함되어서는 안 될 잘못된 데이터로 보입니다. 이를 제거한 것은 적절합니다.
-* **영향도 확인:** 이 스크립트가 ACS(CWMP) 전용인지, 아니면 내부의 다른 시스템에서도 사용되는지 확인이 필요합니다. 만약 다른 내부 로직에서 이 함수를 호출하여 실제 비밀번호를 가져와야 한다면 기능 장애가 발생할 수 있습니다.
-* **데이터 모델 정의와의 일치:** 해당 파라미터가 TR-098 또는 TR-181 데이터 모델 정의에서 `Write-Only`로 설정되어 있는지 확인하십시오. 단순히 빈 문자열을 반환하는 것보다, 데이터 모델 레벨에서 보안 속성을 정의하는 것이 더 근본적인 해결책입니다.
+2. **`dnstrap.c` Excessive Packet Capture**:
+   - Adding `source port 53` to the DNS Trap targets causes all DNS response packets to be intercepted by the kernel.
+   - In a bridge environment, this can lead to unnecessary CPU load and performance degradation.
+   - Intercepting responses might be an over-implementation if the original goal was only to intercept DNS queries.
 
-### 3. 커밋 메시지 보완 권고
-* **'Fix the display values'의 모호성:** 커밋 메시지에서 "Display value를 수정한다"고만 되어 있는데, 구체적으로 "보안 강화를 위해 ACS 조회 시 비밀번호를 마스킹(빈 문자열 반환) 처리함"과 같이 의도를 명확히 기재하는 것이 좋습니다.
+<details><summary>Detailed Feedback</summary>
 
-### 결론
-보안 측면에서 올바른 방향의 수정이나, **이 함수를 내부적으로 호출하는 다른 컴포넌트가 없는지 최종 확인**이 필요합니다. 또한, 원본 코드에 왜 비정상적인 경로 문자열이 포함되어 있었는지에 대한 원인 파악이 병행되면 향후 유사 사례 방지에 도움이 될 것입니다.
-</details></div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-16 17:04:28 (KST)</div></div></body></html>
+The current implementation lacks safety checks before array indexing and might introduce performance bottlenecks in high-traffic scenarios.
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80104' target='_blank'>[HP2236BVA] wifi button turn off all wifi interfaces</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80086' target='_blank'>[HP2236BVA-88] Fix the display values of AdminPassword and SuperAdminPassword on ACS.</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79984' target='_blank'>[ARHT-64] Implement On Top Easy Mesh</a></div><span class="badge detail-badge">Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>### Gerrit Patch Analysis Results
+
+1. **Massive Implementation of "On Top Easy Mesh"**:
+   - The patch introduces a significant amount of new code across multiple components: `1905daemon`, `mapd`, `wappd`, `ledctrl`, and a new application `ontopmesh`.
+   - This seems to be a vendor-specific EasyMesh extension for Humax.
+
+2. **Potential Security and Stability Concerns**:
+   - **`system()` calls**: Multiple occurrences of `system()` with string concatenation (e.g., `system("rm -f "OTMESH_DUMP_FILE_PATH)`) are present. This can be vulnerable to command injection if variables aren't strictly validated.
+   - **`fork()` and `exit()`**: In `otmesh_applyWifiSetting`, a `fork()` is used to restart Wi-Fi settings. Ensure this doesn't lead to zombie processes or race conditions.
+   - **File I/O in `/tmp`**: Extensive use of `/tmp` for IPC (`/tmp/otmesh_bh_ready`). Ensure file permissions are restrictive.
+
+3. **Code Quality**:
+   - **Dead Code**: Commented-out code in Makefiles should be cleaned up.
+   - **Magic Numbers**: Hardcoded string lengths and indices should be replaced with constants.
+
+<details><summary>Detailed Feedback</summary>
+
+- Review `system()` calls for safety.
+- Handle `malloc` failures.
+- Verify `HalMesh_isSameParentMAC` logic for edge cases.
+</details>
+</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80103' target='_blank'>[ARHT-186][HP2236BVA-48] change INTERNET_CONNECTING status</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79974' target='_blank'>[ARHT-405] CWMP: Increase GET request speed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/79835' target='_blank'>[ARHT-89] Fix kernel panic issue on dnstrap module</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Jack</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-17 09:16:08 (KST)</div></div></body></html>
