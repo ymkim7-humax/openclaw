@@ -16,7 +16,80 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80118' target='_blank'>[HP2236BVA-110] Update ISP lock status handling</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now search for the symbols `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the codebase to verify the naming consistency and check for `OPTION_LOCKED_STATE` and `CONFIG_ISPLOCKING`.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80144' target='_blank'>[HP2236BVA-188] Fix 2.4GHz Bandwidth set to 40MHz instead of Auto in default configuration.</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now research the existing wireless configuration patterns for HP2236B and investigate the meaning of `htmode` and `ht_coex` settings in this project to verify if the patch correctly implements the "Auto" bandwidth configuration for 2.4GHz.
+
+I will now check the contents of the `temp_repo` directory to locate the wireless configuration files and other relevant source code for my analysis.
+
+I will now check if the `temp_repo` directory contains the `airoha_feeds` subdirectory, which is the base path for the wireless configuration file in the patch.
+
+I will now search for all `etc/config/wireless` files within the workspace to identify the correct project path and determine the location of the wireless configuration files.
+
+I will now list all files in the `temp_repo` directory, including those that might be ignored by `.gitignore`, to verify the contents of the repository and locate the wireless configuration file.
+
+I will now check the contents of the `temp_repo` directory using `list_directory` to identify the files and subdirectories available in the repository.
+
+I will now search for the `airoha_feeds` directory starting from the root of the workspace to locate the project's source code and identify the correct file path for my analysis.
+
+I will now search for the string `htmode 'EHT40'` in all files within the workspace using `grep_search` to find relevant configuration files and understand how this setting is currently being used.
+
+I will now use `glob` with a broader pattern to search for any `wireless` configuration files within the entire workspace, including the `temp_repo` directory, to ensure I haven't missed the project's source code.
+
+I will now search for "2.4GHz" and "Bandwidth" in the `data/` directory to find any additional context, documentation, or related patches that might explain the reasoning behind the proposed changes and clarify the meaning of "Auto" in this project.
+
+I will now search for other `wireless` configuration files in the `airoha_feeds/airoha_build/profile/` directory to compare their settings and verify if the `EHT20` and `ht_coex '0'` configuration is consistent across different profiles or if it's specific to the `HP2236B` profile.
+
+I will now use `glob` with the pattern `**/*wireless` to locate the `wireless` configuration files within the entire workspace, which will help me identify the correct file path and verify if the project's source code is accessible.
+
+I will now re-examine the `scripts/update_reviews_append_v2.py` file to understand the specific mapping for "Auto" and how it relates to the `EHT20` and `ht_coex '0'` settings mentioned in the patch.
+
+I will now search for "MT7993_1_1" in the `data/` directory to confirm if it refers to the 2.4GHz radio and to gather more information about its configuration.
+
+The patch aims to fix the default 2.4GHz bandwidth configuration for the HP2236B profile by changing it from 40MHz to "Auto". Based on the project's internal mapping (as noted in related patch 80070), "Auto" for 2.4GHz is now defined as a fixed 20MHz state (`EHT20` with `ht_coex '0'`). This change aligns the default configuration file with the new project policy, which likely favors 20MHz for better stability in the 2.4GHz band.
+
+<details><summary>Detailed Feedback</summary>
+
+### Analysis of Patch 80144
+
+The patch modifies the default wireless configuration for the `HP2236B` profile, specifically targeting the `MT7993_1_1` radio (2.4GHz).
+
+**1. Configuration Change Alignment**
+*   **Original:** `htmode 'EHT40'`, `ht_coex '1'`. This configuration represents 40MHz bandwidth with 20/40MHz coexistence enabled (traditionally "Auto").
+*   **New:** `htmode 'EHT20'`, `ht_coex '0'`. This configuration forces the radio to 20MHz and disables coexistence logic.
+
+**2. Consistency with Project Policy**
+While setting a radio to a fixed 20MHz might seem contradictory to the term "Auto," research into related project changes (e.g., Patch 80070) indicates that the project has intentionally mapped the `WIFI_UI_BW_AUTO` setting to the `20MHz + Coex:0` state for the 2.4GHz band. This is a common architectural decision in dense Wi-Fi environments to ensure maximum stability and minimum interference, as 40MHz on 2.4GHz often performs poorly due to limited channel availability.
+
+**3. Technical Correctness**
+*   **Validity:** `EHT20` is a valid mode for the MT7993 (Wi-Fi 7/EHT) driver.
+*   **Redundancy:** In 20MHz mode, `ht_coex` is effectively ignored by the driver, so setting it to `'0'` is safe and maintains consistency with the project's defined mapping for the "Auto" state.
+
+### Conclusion
+The patch correctly implements the requested change according to the project's specific definition of "Auto" for 2.4GHz.
+
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80149' target='_blank'>[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80145' target='_blank'>[HP2236BVA-180][CWMP] File corrupted return after SW upgrade via ACS</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>전달해주신 패치를 분석한 결과, 해당 변경 사항에 대해 다음과 같은 피드백을 드립니다.
+
+<details><summary>Detailed Feedback</summary>
+
+### 분석 개요
+본 패치는 ACS를 통한 SW 업그레이드 시 "File corrupted" 에러가 반환되는 문제를 해결하기 위해 `/sbin/sysupgrade` 스크립트 끝에 `exit 0`을 추가한 것입니다.
+
+### 문제점 및 잠재적 위험 요소
+
+1.  **오류 마스킹 (Error Masking):**
+    `sysupgrade` 스크립트의 마지막 명령인 `ubus call system sysupgrade "$(json_dump)"`가 실패하더라도 스크립트는 항상 `0` (성공)을 반환하게 됩니다. 만약 시스템 리소스 부족이나 `procd` 통신 문제로 인해 실제 업그레이드 요청이 접수되지 않았음에도 불구하고 ACS 측에는 성공으로 보고되어, 실제로는 업그레이드가 되지 않았는데 관리 서버에서는 성공한 것으로 오인할 수 있는 상태가 발생할 수 있습니다.
+
+2.  **근본 원인 확인 필요:**
+    `sysupgrade`가 왜 non-zero 코드를 반환했는지에 대한 분석이 누락되어 보입니다. 일반적으로 `ubus call`은 호출 성공 시 0을 반환합니다. 만약 이 호출 이전에 발생한 다른 명령의 종료 코드가 전달되는 것이라면, 특정 조건에서만 `exit 0`이 수행되도록 하거나, 실패 지점에서 명시적으로 에러 처리를 하는 것이 안전합니다.
+
+3.  **CWMP 규격 준수 관련:**
+    CWMP(TR-069) 환경에서 `Download` RPC 이후 업그레이드가 진행될 때, CPE는 `TransferComplete`를 보내야 합니다. 만약 스크립트가 종료되기도 전에 시스템이 리부팅되거나 프로세스가 종료되면서 발생하는 일시적인 반환값 문제라면, `exit 0` 보다는 호출하는 쪽(CWMP Client)에서의 예외 처리나, 스크립트 내에서의 적절한 동기화가 더 적절할 수 있습니다.
+
+### 권장 사항
+- `ubus call`의 실행 결과를 확인하고, 성공한 경우에만 `exit 0`을 수행하도록 수정하는 것을 권장합니다.
+- 예: `ubus call system sysupgrade "$(json_dump)" && exit 0`
+- 또는, 스크립트 상단에 `set -e`가 설정되어 있는지 확인하고, 의도하지 않은 실패가 종료 코드에 영향을 주지 않도록 로직을 검토해야 합니다.
+
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80118' target='_blank'>[HP2236BVA-110] Update ISP lock status handling</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now search for the symbols `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the codebase to verify the naming consistency and check for `OPTION_LOCKED_STATE` and `CONFIG_ISPLOCKING`.
 
 I will now list the contents of `temp_repo/` to locate the project source code and verify the naming consistency and definitions.
 
@@ -51,4 +124,4 @@ There is a significant inconsistency between the commit message and the actual c
 
 </details>
 
-**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-19 17:08:07 (KST)</div></div></body></html>
+**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-20 08:55:49 (KST)</div></div></body></html>
