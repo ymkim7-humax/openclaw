@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Build Dashboard v6</title>
+    <style>
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1000px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px; color: #94a3b8; font-size: 12px; border-bottom: 2px solid #334155; }
+        td { padding: 10px; font-size: 13px; }
+        code { background: #000; padding: 2px 5px; border-radius: 3px; color: #34d399; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 style="margin-top:0; color:#3b82f6;">📊 Build Analytics Report</h2>
+        <div id="last-update" style="font-size: 11px; color: #64748b; margin-bottom: 10px;"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>시작 일시 (KST)</th>
+                    <th>결과</th>
+                    <th>Git Hashes</th>
+                    <th>Binary Sizes (Bytes)</th>
+                    <th>RootFS Stats</th>
+                </tr>
+            </thead>
+            <tbody id="build-history">
+                <!-- Data will be injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/status.json');
+                const data = await response.json();
+                const tbody = document.getElementById('build-history');
+                tbody.innerHTML = '';
+
+                data.forEach(entry => {
+                    const rowColor = entry.status === 'SUCCESS' ? '#34d399' : '#f87171';
+                    const tr1 = document.createElement('tr');
+                    tr1.style.background = 'rgba(255,255,255,0.02)';
+                    tr1.innerHTML = `
+                        <td rowspan="2" style="border-left: 4px solid ${rowColor}; font-size: 12px; color: #94a3b8;">${entry.timestamp}</td>
+                        <td style="color: ${rowColor}; font-weight: bold; font-size: 14px;">${entry.status}</td>
+                        <td><span style="color: #64748b; font-size: 11px;">Airoha:</span> <code>${entry.git_hash}</code></td>
+                        <td><span style="color: #64748b; font-size: 11px;">Linux:</span> ${entry.bin_size}</td>
+                        <td><span style="color: #64748b; font-size: 11px;">RootFS:</span> ${entry.rootfs_files} files</td>
+                    `;
+                    
+                    const tr2 = document.createElement('tr');
+                    tr2.style.borderBottom = '2px solid #334155';
+                    tr2.innerHTML = `
+                        <td><span style="color: #64748b; font-size: 11px;">Duration:</span> <b style="color: #fbbf24;">${entry.duration || 'N/A'}</b></td>
+                        <td><span style="color: #64748b; font-size: 11px;">Clay:</span> <code>${entry.clay_hash || 'N/A'}</code></td>
+                        <td><span style="color: #64748b; font-size: 11px;">Boot:</span> ${entry.boot_size || 'N/A'}</td>
+                        <td><span style="color: #64748b; font-size: 11px;">Changes:</span> <b style="color: #60a5fa;">${entry.changes || 'N/A'}</b></td>
+                    `;
+                    
+                    tbody.appendChild(tr1);
+                    tbody.appendChild(tr2);
+                });
+                document.getElementById('last-update').innerText = 'Last Sync: ' + new Date().toLocaleString();
+            } catch (err) {
+                console.error('Failed to load build status:', err);
+            }
+        }
+        updateDashboard();
+        setInterval(updateDashboard, 30000);
+    </script>
+</body>
+</html>

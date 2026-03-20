@@ -1,0 +1,10 @@
+openclaw.json
+openclaw.bak/
+hp2236b/
+release/
+webs/github/
+webs/local/
+*.jsonl
+*.log
+*.sqlite
+*.swp

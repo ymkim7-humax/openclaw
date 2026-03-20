@@ -1,0 +1,67 @@
+# [Proposed] .openclaw/canvas/index.html
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OpenClaw Build Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: #eee; padding: 20px; }
+        h1 { color: #00d1b2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 12px; text-align: left; }
+        th { background: #333; }
+        tr:nth-child(even) { background: #252525; }
+        .status-ok { color: #48c774; font-weight: bold; }
+        .status-fail { color: #f14668; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🚀 빌드 자동화 대시보드</h1>
+    <div id="last-update" style="font-size: 0.9em; opacity: 0.7;"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>시간 (KST)</th>
+                <th>Git Hash</th>
+                <th>바이너리 크기</th>
+                <th>RootFS 파일</th>
+                <th>파일명</th>
+            </tr>
+        </thead>
+        <tbody id="build-history">
+            <!-- Data injected here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function updateDashboard() {
+            try {
+                // Assuming build_status.json is in workspace/jobs/auto_build/
+                // Note: canvasHost root is .openclaw/canvas
+                const response = await fetch('/status.json');
+                const data = await response.json();
+                const tbody = document.getElementById('build-history');
+                tbody.innerHTML = '';
+
+                data.forEach(entry => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${entry.timestamp}</td>
+                        <td><code>${entry.git_hash}</code></td>
+                        <td>${entry.bin_size}</td>
+                        <td>${entry.rootfs_files}</td>
+                        <td>${entry.filename}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                document.getElementById('last-update').innerText = '최근 업데이트: ' + new Date().toLocaleString();
+            } catch (err) {
+                console.error('Failed to load build status:', err);
+            }
+        }
+        updateDashboard();
+        setInterval(updateDashboard, 60000); // 1분마다 갱신
+    </script>
+</body>
+</html>
