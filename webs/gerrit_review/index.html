@@ -16,57 +16,7 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-188] Fix 2.4GHz Bandwidth set to 40MHz instead of Auto in default configuration.</div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Karina</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now research the existing wireless configuration patterns for HP2236B and investigate the meaning of `htmode` and `ht_coex` settings in this project to verify if the patch correctly implements the "Auto" bandwidth configuration for 2.4GHz.
-
-I will now check the contents of the `temp_repo` directory to locate the wireless configuration files and other relevant source code for my analysis.
-
-I will now check if the `temp_repo` directory contains the `airoha_feeds` subdirectory, which is the base path for the wireless configuration file in the patch.
-
-I will now search for all `etc/config/wireless` files within the workspace to identify the correct project path and determine the location of the wireless configuration files.
-
-I will now list all files in the `temp_repo` directory, including those that might be ignored by `.gitignore`, to verify the contents of the repository and locate the wireless configuration file.
-
-I will now check the contents of the `temp_repo` directory using `list_directory` to identify the files and subdirectories available in the repository.
-
-I will now search for the `airoha_feeds` directory starting from the root of the workspace to locate the project's source code and identify the correct file path for my analysis.
-
-I will now search for the string `htmode 'EHT40'` in all files within the workspace using `grep_search` to find relevant configuration files and understand how this setting is currently being used.
-
-I will now use `glob` with a broader pattern to search for any `wireless` configuration files within the entire workspace, including the `temp_repo` directory, to ensure I haven't missed the project's source code.
-
-I will now search for "2.4GHz" and "Bandwidth" in the `data/` directory to find any additional context, documentation, or related patches that might explain the reasoning behind the proposed changes and clarify the meaning of "Auto" in this project.
-
-I will now search for other `wireless` configuration files in the `airoha_feeds/airoha_build/profile/` directory to compare their settings and verify if the `EHT20` and `ht_coex '0'` configuration is consistent across different profiles or if it's specific to the `HP2236B` profile.
-
-I will now use `glob` with the pattern `**/*wireless` to locate the `wireless` configuration files within the entire workspace, which will help me identify the correct file path and verify if the project's source code is accessible.
-
-I will now re-examine the `scripts/update_reviews_append_v2.py` file to understand the specific mapping for "Auto" and how it relates to the `EHT20` and `ht_coex '0'` settings mentioned in the patch.
-
-I will now search for "MT7993_1_1" in the `data/` directory to confirm if it refers to the 2.4GHz radio and to gather more information about its configuration.
-
-The patch aims to fix the default 2.4GHz bandwidth configuration for the HP2236B profile by changing it from 40MHz to "Auto". Based on the project's internal mapping (as noted in related patch 80070), "Auto" for 2.4GHz is now defined as a fixed 20MHz state (`EHT20` with `ht_coex '0'`). This change aligns the default configuration file with the new project policy, which likely favors 20MHz for better stability in the 2.4GHz band.
-
-<details><summary>Detailed Feedback</summary>
-
-### Analysis of Patch 80144
-
-The patch modifies the default wireless configuration for the `HP2236B` profile, specifically targeting the `MT7993_1_1` radio (2.4GHz).
-
-**1. Configuration Change Alignment**
-*   **Original:** `htmode 'EHT40'`, `ht_coex '1'`. This configuration represents 40MHz bandwidth with 20/40MHz coexistence enabled (traditionally "Auto").
-*   **New:** `htmode 'EHT20'`, `ht_coex '0'`. This configuration forces the radio to 20MHz and disables coexistence logic.
-
-**2. Consistency with Project Policy**
-While setting a radio to a fixed 20MHz might seem contradictory to the term "Auto," research into related project changes (e.g., Patch 80070) indicates that the project has intentionally mapped the `WIFI_UI_BW_AUTO` setting to the `20MHz + Coex:0` state for the 2.4GHz band. This is a common architectural decision in dense Wi-Fi environments to ensure maximum stability and minimum interference, as 40MHz on 2.4GHz often performs poorly due to limited channel availability.
-
-**3. Technical Correctness**
-*   **Validity:** `EHT20` is a valid mode for the MT7993 (Wi-Fi 7/EHT) driver.
-*   **Redundancy:** In 20MHz mode, `ht_coex` is effectively ignored by the driver, so setting it to `'0'` is safe and maintains consistency with the project's defined mapping for the "Auto" state.
-
-### Conclusion
-The patch correctly implements the requested change according to the project's specific definition of "Auto" for 2.4GHz.
-
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-180][CWMP] File corrupted return after SW upgrade via ACS</div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>전달해주신 패치를 분석한 결과, 해당 변경 사항에 대해 다음과 같은 피드백을 드립니다.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-411] Disabled X_HNI_xxx,</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-164] Disabled TCSUPPORT_VOIP,</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-183] HNI_MODEL_NAME</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-180][CWMP] File corrupted return after SW upgrade via ACS</div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>전달해주신 패치를 분석한 결과, 해당 변경 사항에 대해 다음과 같은 피드백을 드립니다.
 
 <details><summary>Detailed Feedback</summary>
 
@@ -124,4 +74,4 @@ There is a significant inconsistency between the commit message and the actual c
 
 </details>
 
-**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-20 08:55:49 (KST)</div></div></body></html>
+**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-20 13:09:38 (KST)</div></div></body></html>
