@@ -16,76 +16,189 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80160' target='_blank'>[ARHT-411] Disabled X_HNI_xxx,</a></div><span class="badge detail-badge">Needs Fix</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details>
-<summary>Detailed Feedback</summary>
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80149' target='_blank'>[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>이 패치에 대한 분석 결과입니다.
 
-- **Unsafe Loop**: `for dms in $dmscripts; do` relies on word splitting. Consider using `readarray` or `while read` if filenames could contain spaces.
-- **Style**: Use `[[ ... ]]` instead of `[ ... ]` for bash-specific tests to avoid word splitting issues.
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge detail-badge">Needs Fix</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details>
-<summary>Detailed Feedback</summary>
-
-- **Background Task**: Running `/sbin/wifi reload &` inside a wrapper might lead to race conditions if the wrapper doesn't handle background pids. Ensure `common_execute_command_in_apply_service` is safe for background execution.
-- **Style**: Prefer `[[ ... ]]` and `(( ... ))` for comparisons.
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80159' target='_blank'>[ARHT-164] Disabled TCSUPPORT_VOIP,</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>The patch looks perfectly fine and follows best practices.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80157' target='_blank'>[ARHT-183] HNI_MODEL_NAME</a></div><span class="badge detail-badge">Needs Fix</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details>
-<summary>Detailed Feedback</summary>
-
-- **Refactoring**: Replacing dynamic model name lookup with a macro `HNI_MODEL_NAME`. Ensure this macro is correctly defined for all supported hardware variants to avoid hardcoding issues.
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80149' target='_blank'>[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80145' target='_blank'>[HP2236BVA-180][CWMP] File corrupted return after SW upgrade via ACS</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>전달해주신 패치를 분석한 결과, 해당 변경 사항에 대해 다음과 같은 피드백을 드립니다.
-
-<details><summary>Detailed Feedback</summary>
+<details><summary>Click to see details</summary>
 
 ### 분석 개요
-본 패치는 ACS를 통한 SW 업그레이드 시 "File corrupted" 에러가 반환되는 문제를 해결하기 위해 `/sbin/sysupgrade` 스크립트 끝에 `exit 0`을 추가한 것입니다.
+본 패치는 `HalMesh_getBackhaulCfg` 함수에서 유효하지 않은 Mesh Backhaul(BH) 마스크가 감지되었을 때 `HAL_FAILURE`를 반환하던 로직을 `HAL_SUCCESS`를 반환하도록 수정하여, GUI에서 발생하는 500 에러를 방지하고자 하는 목적을 가지고 있습니다.
 
-### 문제점 및 잠재적 위험 요소
+### 상세 분석
 
-1.  **오류 마스킹 (Error Masking):**
-    `sysupgrade` 스크립트의 마지막 명령인 `ubus call system sysupgrade "$(json_dump)"`가 실패하더라도 스크립트는 항상 `0` (성공)을 반환하게 됩니다. 만약 시스템 리소스 부족이나 `procd` 통신 문제로 인해 실제 업그레이드 요청이 접수되지 않았음에도 불구하고 ACS 측에는 성공으로 보고되어, 실제로는 업그레이드가 되지 않았는데 관리 서버에서는 성공한 것으로 오인할 수 있는 상태가 발생할 수 있습니다.
+1.  **동작 변경 사항**:
+    *   기존: `bh_mask`가 예상된 케이스(2.4G, 5G, Dual 등)에 해당하지 않을 경우 에러 로그를 남기고 즉시 `HAL_FAILURE`를 반환했습니다.
+    *   변경: 동일한 상황에서 로그는 남기되, `break`를 통해 함수 끝으로 이동하여 `HAL_SUCCESS`를 반환합니다.
 
-2.  **근본 원인 확인 필요:**
-    `sysupgrade`가 왜 non-zero 코드를 반환했는지에 대한 분석이 누락되어 보입니다. 일반적으로 `ubus call`은 호출 성공 시 0을 반환합니다. 만약 이 호출 이전에 발생한 다른 명령의 종료 코드가 전달되는 것이라면, 특정 조건에서만 `exit 0`이 수행되도록 하거나, 실패 지점에서 명시적으로 에러 처리를 하는 것이 안전합니다.
+2.  **잠재적 위험 요소**:
+    *   **초기값 의존성**: `stMeshCfg` 구조체가 함수 시작 부분에서 어떻게 초기화되는지가 중요합니다. 커밋 메시지에 따르면 "모든 인터페이스가 비활성화된 경우 기본 BH 인터페이스(5GHz)를 사용한다"고 되어 있으나, 코드상으로는 `default` 케이스에서 단순히 `break`만 수행할 뿐 `stMeshCfg`에 특정 값을 명시적으로 할당하는 로직이 보이지 않습니다.
+    *   만약 이 함수 내부에서 `stMeshCfg`를 5GHz로 초기화한 뒤 `switch` 문에 진입한다면 의도대로 동작하겠지만, 그렇지 않다면 호출 측에서 초기화되지 않은 데이터를 읽게 될 위험이 있습니다.
 
-3.  **CWMP 규격 준수 관련:**
-    CWMP(TR-069) 환경에서 `Download` RPC 이후 업그레이드가 진행될 때, CPE는 `TransferComplete`를 보내야 합니다. 만약 스크립트가 종료되기도 전에 시스템이 리부팅되거나 프로세스가 종료되면서 발생하는 일시적인 반환값 문제라면, `exit 0` 보다는 호출하는 쪽(CWMP Client)에서의 예외 처리나, 스크립트 내에서의 적절한 동기화가 더 적절할 수 있습니다.
+3.  **설계 의도**:
+    *   GUI 500 에러는 일반적으로 백엔드 API가 에러 코드(Non-zero)를 반환할 때 발생합니다. `HAL_SUCCESS`를 반환함으로써 상위 레이어에서 이를 정상으로 간주하게 하여 GUI 크래시를 막으려는 의도는 달성되나, 실제 설정값이 무엇으로 전달되는지 확인이 필요합니다.
 
 ### 권장 사항
-- `ubus call`의 실행 결과를 확인하고, 성공한 경우에만 `exit 0`을 수행하도록 수정하는 것을 권장합니다.
-- 예: `ubus call system sysupgrade "$(json_dump)" && exit 0`
-- 또는, 스크립트 상단에 `set -e`가 설정되어 있는지 확인하고, 의도하지 않은 실패가 종료 코드에 영향을 주지 않도록 로직을 검토해야 합니다.
+*   `default` 케이스에서 단순히 `break`를 하기보다는, 커밋 메시지의 의도대로 `stMeshCfg->backhaul = HAL_MESH_BH_5G;` (가칭)와 같이 명시적으로 기본값을 할당하는 것이 안전합니다.
+*   함수 시작 부분에서 `stMeshCfg`를 기본값으로 초기화하고 있는지 재확인하십시오.
 
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80118' target='_blank'>[HP2236BVA-110] Update ISP lock status handling</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now search for the symbols `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the codebase to verify the naming consistency and check for `OPTION_LOCKED_STATE` and `CONFIG_ISPLOCKING`.
+### Verdict
+**Needs Improvement (Minor)**
+(GUI 에러를 막는 효과는 있으나, 명시적인 기본값 할당 로직이 추가되는 것이 코드 안정성 측면에서 바람직합니다.)
 
-I will now list the contents of `temp_repo/` to locate the project source code and verify the naming consistency and definitions.
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>이 Gerrit 패치를 분석한 결과, 전반적으로 코드의 안정성과 정확성을 높이는 적절한 수정 사항들을 포함하고 있습니다. 특히 기존 코드에 존재하던 구문 오류(Syntax Error)와 로직 버그를 해결하고 있습니다.
 
-I will now list all files and subdirectories in `temp_repo/` to understand its structure and locate the source code.
+<details><summary>상세 분석 결과 확인 (클릭)</summary>
 
-I will now list the contents of `temp_repo` again, this time without respecting ignore files, to confirm if the source code is present.
+### 1. 주요 수정 사항 분석
 
-I will now check the current directory once more for the project files, as they are not in `temp_repo`.
+*   **wifi reload 방식 변경 (`lan_device`):**
+    *   `/sbin/wifi reload &` 직접 실행을 `common_execute_command_in_apply_service` 함수 호출로 변경했습니다. 이는 시스템의 서비스 관리 프레임워크를 통해 일관성 있게 명령을 실행하도록 개선한 것으로 보입니다.
+*   **Auto Channel 설정 로직 개선 (`lan_device`):**
+    *   `case` 문에서 "true"/"false" 외에도 "1"/"0" 입력을 처리할 수 있도록 확장되었습니다. TR-098 파라미터 값이 다양한 형태로 전달될 수 있는 환경에서 유연성을 높였습니다.
+    *   **버그 수정:** `$$E_INVALID_PARAMETER_VALUE`라는 오타를 `$E_INVALID_PARAMETER_VALUE`로 올바르게 수정했습니다. 기존에는 잘못된 변수 참조로 인해 에러 처리가 정상적으로 동작하지 않았을 것입니다.
+*   **함수 반환 로직 수정 (`layer3_forwarding`, `x_hni_urlfiltering`):**
+    *   **버그 수정:** 에러 코드 변수(`$E_INVALID_PARAMETER_NAME`)를 단순히 명령어로 실행하려던 부분을 `return $E_INVALID_PARAMETER_NAME`으로 수정하여 올바른 에러 반환이 가능하게 했습니다.
+    *   `entry_execute_method_root_X_Layer3Forwarding` 함수에서 성공 시 `return 0`을 명시하여 에러 케이스로 빠지는 것을 방지했습니다.
 
-I will now search for `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the current directory and its subdirectories to see if they appear in any other files.
+### 2. 보안 및 성능 검토
+*   **보안:** 쉘 스크립트에서의 명령어 주입(Injection) 위험은 보이지 않으며, 기존의 잘못된 에러 핸들링을 수정하여 시스템 안정성을 높였습니다.
+*   **성능:** 백그라운드 실행(`&`)을 포함한 서비스 호출 방식은 네트워크 설정 변경 시 발생할 수 있는 지연을 최소화하는 데 적절합니다.
 
-The analysis of the patch for project 'airoha/2025q3' reveals a discrepancy between the commit message and the actual implementation, though the code itself appears sound.
-
-<details><summary>Detailed Feedback</summary>
-
-### 1. Commit Message Mismatch
-There is a significant inconsistency between the commit message and the actual code changes:
-*   **Commit Message:** Claims to use `HalNetwork_isIspLocked()` in `hal_network.c`.
-*   **Actual Code:** Implements `HalGateway_isIspLocked()` in `hal_gateway.c` and updates `ledctrl.c` to use this new function.
-*   **Recommendation:** Update the commit message to accurately reflect the function and file names used in the implementation (e.g., replace `HalNetwork_isIspLocked` with `HalGateway_isIspLocked`).
-
-### 2. Logic and Implementation
-*   **`hal_gateway.c`:** The implementation of `HalGateway_isIspLocked()` is correct. It properly uses `HalConfig_get` with the appropriate constants (`CONFIG_ISPLOCKING`, `OPTION_LOCKED_STATE`) and returns a boolean based on a string comparison with `"1"`.
-*   **`vendor_preinit`:** Initializing `isplocking.@isplocking[0].locked='0'` is a necessary and correct addition to ensure consistent state after boot.
-*   **`ledctrl.c`:** The refactoring of `check_internet_status` is an improvement.
-    *   It simplifies the flow by removing redundant `else` blocks.
-    *   It ensures that `Hal_setInternetLed(INTERNET_LED_RED_OFF)` is called if the ISP is no longer locked, which is a cleaner way to handle state transitions.
-
-### 3. Minor Observations
-*   The use of `STR_LEN_8` for the `value` buffer in `HalGateway_isIspLocked()` is appropriate for storing "0" or "1".
-*   The logic transition for `INTERNET_LED_FW_UPGRADE` was also simplified (removing the `else` block), which is consistent with the other changes.
+### 3. 개선 제안
+*   `layer3_forwarding` 파일의 `return 0;` 부분에 세미콜론(`;`)이 포함되어 있는데, 쉘 스크립트에서는 필수적이지 않으며 다른 라인들과의 일관성을 위해 제거할 수도 있으나 동작에는 지장이 없습니다.
 
 </details>
 
-**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-20 17:12:41 (KST)</div></div></body></html>
+**Verdict: LGTM (With Bug Fixes)**
+
+이 패치는 보고된 Jira 이슈(HP2236BVA-143)를 해결할 뿐만 아니라, 기존 코드의 잠재적인 런타임 에러들을 수정하는 완성도 높은 패치입니다.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80177' target='_blank'>[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Click to see details</summary>
+
+### Analysis
+The patch addresses the issue where the IP Gateway address cannot be retrieved for all WAN interfaces when HNI Port Binding is enabled. It achieves this by mirroring relevant routes (subnets and the primary default route) from interface-specific routing tables into the `RT_TABLE_MAIN` (main table).
+
+#### Key Improvements:
+1.  **State Tracking**: Introduced `installed_table` and `installed_main` flags in `struct device_route` to accurately track which tables a route has been applied to. This prevents orphaned routes or double-deletions during interface updates.
+2.  **Selective Mirroring**: Default routes are only mirrored to the main table if the interface is designated as the primary default WAN (`no_defaultroute` is false), preventing conflicting default gateways in the main table.
+3.  **Stability**: In `interface_update_proto_route`, route state is preserved during updates (via the `keep` flag), ensuring continuity during protocol events like DHCP renewals.
+4.  **Ubus Transparency**: Updated `ubus.c` to correctly filter and display routes based on their installation status in HNI configurations.
+
+#### Technical Observations:
+- **Mirroring Logic**: The use of `system_rt_main` to create a copy of the route with `rt_main.table = RT_TABLE_MAIN` is a standard and safe way to interact with the netlink subsystem in `netifd`.
+- **Atomic Operations**: `system_add_rt_main` performs an explicit `RTM_DELROUTE` followed by `RTM_NEWROUTE`. While this is an "upsert" pattern, it ensures the main table stays synchronized even if the route parameters changed slightly.
+- **Safety Checks**: `should_process_custom_table` correctly avoids mirroring routes that are already intended for the main, local, or default tables.
+
+#### Minor Feedback:
+- **Indentation**: There are several instances of inconsistent indentation (mixed spaces and tabs) in the patch file. For example, lines like `+ 	system_del_rt_main(dev, r);` appear to have spaces where tabs are expected by the `netifd` coding style.
+- **Error Handling**: The return value of the initial `system_rt_main(dev, route, RTM_DELROUTE)` in `system_add_rt_main` is ignored. This is generally acceptable as the delete will fail if the route doesn't exist, but it won't prevent the subsequent `NEWROUTE` from attempting to install it.
+
+### Verdict
+The patch is logically sound and correctly implements the required routing behavior to fix gateway detection issues while maintaining system stability.
+
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80193' target='_blank'>[ARHT-390] fix potential invalid memory access in DNS recap handling</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details><summary>Click to see details</summary>
+
+### 1. Critical Build Failure: Missing `mac_answer`
+The patch removes the definition of the global `mac_answer` array but continues to use it in `br_dns_packet_recap`.
+- **Removed:** `unsigned char mac_answer[ETH_ALEN] = { 0x02, 0xAA, 0xBB, 0x01, 0x23, 0x45};`
+- **Used:** `memcpy(eth_hdr(skb)->h_source, mac_answer, ETH_ALEN);`
+This will result in a compilation error: `'mac_answer' undeclared`.
+
+### 2. Security: Out-of-Bounds (OOB) Read in DNS Parsing
+In `is_not_allowed_dns_query`, the code calculates `len` from the UDP header length and then uses it to access `skb->data` without verifying the actual packet size:
+```c
+len = ntohs(udph->len) - sizeof(struct udphdr) - sizeof(dnsheader_t) - 4;
+...
+body = skb->data + offset + sizeof(dnsheader_t);
+type = get_domain_name(body, len, domain, sizeof(domain));
+```
+A malicious packet can provide a `udph->len` that is significantly larger than the actual data stored in the `skb`. While `skb_linearize()` ensures the data is contiguous, it does not guarantee that the buffer is as large as the UDP length field claims. This leads to an OOB read in `get_domain_name`.
+
+### 3. Invalid Memory Access: Fragile MAC Header Check
+The check for the existence of an Ethernet header is manually implemented and potentially dangerous:
+```c
+eh = eth_hdr(skb);
+if ((dns_ver == DNS_V4 && ((unsigned char *)iph - (unsigned char *)eh >= ETH_HLEN)) ...
+```
+If `skb->mac_header` is not set (e.g., in certain tunnel or ppp scenarios), `eth_hdr(skb)` may return an invalid pointer (e.g., `skb->head + 0xFFFF`). Relying on pointer arithmetic between potentially unrelated memory addresses is unsafe. 
+- **Recommendation:** Use `skb_mac_header_was_set(skb)` to verify the MAC header's validity.
+
+### 4. Performance: Invasive Hook in `__dev_queue_xmit`
+The patch adds a DNS query inspector and `skb_linearize()` call into the hot path of `__dev_queue_xmit`:
+```c
+if (!is_recaped_dns_packet(skb) && is_not_allowed_dns_query(skb, NULL))
+    goto drop;
+```
+This performs deep packet inspection (DPI) and potentially expensive memory reallocation/copying (`skb_linearize`) for every DNS packet leaving the system. This should ideally be handled at the netfilter/iptables level or within specific bridge hooks rather than the generic device transmission path.
+
+### 5. Code Quality & Logic
+- **Indentation:** The changes in `br_input.c` and `dnstrap.c` contain mixed tabs and spaces, violating kernel coding standards.
+- **Untrusted Input:** `ntohs(udph->len)` is used to calculate `len` without checking if it's smaller than the headers (`sizeof(udphdr) + sizeof(dnsheader_t) + 4`), which could lead to a negative value or underflow logic issues.
+
+### 6. Correctness: Re-fetching Headers
+The patch correctly re-fetches `iph` and `udph` after `pskb_expand_head`, which is a good fix for the reported crash. However, the other issues mentioned above make the patch unsafe in its current form.
+
+</details>
+
+**Verdict:** 
+**Needs Revision (Critical)** - The patch will fail to compile and contains a potential out-of-bounds read vulnerability.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80190' target='_blank'>[HP2236BVA-35] txpower,</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>이 패치는 AIS의 요구사항에 따라 송신 출력(Transmit Power) 매핑 로직을 수정한 것입니다. 전체적인 로직은 요구사항을 정확히 반영하고 있으나, 변수 명명법에서 다소 혼란을 줄 수 있는 부분이 있습니다.
+
+<details><summary>Click to see details</summary>
+
+### 분석 결과
+
+1.  **로직 정확성**:
+    *   요구사항: 50%(Low), 75%(Medium), 100%(High, Default).
+    *   수정된 코드:
+        *   `TXPOWER_LOW(30)` <-> `NBTC_STANDARD_50(50)`
+        *   `TXPOWER_MEDIUM(60)` <-> `NBTC_STANDARD_100(75)`
+        *   `TXPOWER_HIGH(100)` <-> `NBTC_STANDARD_MAX(100)`
+        *   기본값(Default)을 `TXPOWER_MEDIUM`에서 `TXPOWER_HIGH`로 변경.
+    *   결과적으로 AIS 요구사항을 정확하게 구현하고 있습니다.
+
+2.  **변수 명명 (Code Smell)**:
+    *   `NBTC_STANDARD_100` 변수의 값이 `75`로 설정되었습니다.
+    *   `NBTC_STANDARD_MAX` 변수의 값이 `100`으로 설정되었습니다.
+    *   기존 변수 이름을 유지하면서 값만 변경한 것으로 보이는데, 이는 향후 유지보수 시 오해를 불러일으킬 소지가 있습니다. `NBTC_STANDARD_75`, `NBTC_STANDARD_100` 등으로 이름을 변경하는 것이 더 직관적이었을 것입니다. (다만, 이 상수가 외부 인터페이스나 다른 스크립트와 공유되는 고정된 이름이라면 변경이 어려울 수 있습니다.)
+
+3.  **예외 처리**:
+    *   `set` 함수에서 유효하지 않은 값이 들어올 경우 `E_INVALID_PARAMETER_VALUE`를 반환하도록 강화되었습니다. 이는 이전의 무조건적인 default 처리보다 더 안전한 구현입니다.
+
+4.  **기타**:
+    *   불필요한 공백 제거 등 사소한 코드 정리(Cleanup)가 포함되었습니다.
+
+### Verdict
+로직상 오류는 없으며 요구사항을 충실히 반영하고 있습니다. 변수 이름과 실제 값 사이의 괴리는 아쉽지만, 전체적인 동작에는 문제가 없습니다.
+
+**Verdict: LGTM (with minor naming suggestion)**
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80150' target='_blank'>[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>저는 전문가로서 해당 패치를 분석한 결과, 보안 및 로직 측면에서 심각한 부작용을 초래할 수 있는 코드로 판단됩니다.
+
+<details><summary>Click to see details</summary>
+
+### 분석 내용
+
+1.  **비논리적인 규칙 반전 (Logic Inversion)**
+    *   기존 코드: `rulePolicy = (!strcmp(rule.action, ATTR_BLOCK)) ? "-j DROP" : "-j ACCEPT";`
+        *   규칙의 설정에 따라 BLOCK이면 DROP, 아니면 ACCEPT를 적용합니다.
+    *   변경 코드: `rulePolicy = (!strcmp(rule.action, ATTR_BLOCK) == rule.active) ? "-j DROP" : "-j ACCEPT";`
+        *   이 수식은 `rule.active`가 `false`(0)일 때 동작을 완전히 반전시킵니다.
+        *   **문제점:** 만약 어떤 규칙이 `ALLOW`(`ACCEPT`) 규칙인데 비활성화(`active=false`)된 경우, `(0 == 0)`이 되어 `-j DROP`이 적용됩니다. 즉, **특정 접근을 허용하려다 규칙을 끈 것이 오히려 명시적인 차단 규칙으로 변하게 됩니다.** 이는 사용자 의도와 완전히 상반되는 보안 위협이 될 수 있습니다.
+
+2.  **비활성 규칙의 강제 적용**
+    *   변경 전에는 `rule.active != true`이면 `continue`를 통해 규칙을 건너뛰었습니다.
+    *   변경 후에는 `serviceName`이 "Whitelist"가 아닌 모든 비활성 규칙을 강제로 프로세스에 포함시킵니다.
+    *   이로 인해 시스템의 모든 비활성화된 Access Control 규칙들이 위의 반전된 로직에 따라 예상치 못한 `DROP` 또는 `ACCEPT` 규칙으로 변하여 방화벽(iptables 등)에 삽입됩니다.
+
+3.  **부작용 (Side Effects)**
+    *   WEBUI WAN 접근 문제는 해결될지 모르나(비활성화된 BLOCK 규칙이 ACCEPT로 변하므로), 시스템에 설정된 다른 모든 `Allow` 규칙들이 비활성화 상태일 때 `Block` 규칙으로 돌변하여 정상적인 트래픽을 차단하게 됩니다.
+    *   이는 매우 위험한 접근 방식이며, 특정 서비스("Whitelist"가 아닌 경우)에만 이 로직을 적용하는 것조차 일반적인 보안 엔진 설계 원칙(비활성 규칙은 무시됨)에 어긋납니다.
+
+### 권장 사항
+*   비활성화 시 특정 접근을 허용해야 한다면, 비활성화된 규칙을 강제로 반전시켜 적용하는 것이 아니라 기본 정책(Default Policy)을 확인하거나, 해당 서비스가 비활성화될 때 명시적인 ALLOW 규칙이 추가되도록 설계를 변경해야 합니다.
+*   현재의 패치는 "규칙을 끄면 동작이 반대(Allow <-> Block)가 된다"는 위험한 가정을 전제로 하고 있습니다.
+
+### Verdict
+**CRITICAL / BUGGY** - 비활성화된 허용 규칙이 차단 규칙으로 변하는 치명적인 로직 오류를 포함하고 있습니다.
+
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80157' target='_blank'>[ARHT-183] HNI_MODEL_NAME</a></div><span class="badge detail-badge">Needs Fix</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><details>
+<summary>Detailed Feedback</summary>
+
+- **Refactoring**: Replacing dynamic model name lookup with a macro `HNI_MODEL_NAME`. Ensure this macro is correctly defined for all supported hardware variants to avoid hardcoding issues.
+</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-21 09:42:15 (KST)</div></div></body></html>
