@@ -16,7 +16,15 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>TR-069를 통한 WiFi 채널 설정이 반영되지 않던 스크립트 오류를 수정했습니다.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80218' target='_blank'>[BIFROST-78] [5GNR] failover scenario</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>PON 장애 시 5GNR로의 Failover 및 복구(Fallback) 시나리오를 구현한 패치입니다.
+
+**상세 리뷰:**
+- **모니터링 로직**: `pon_health_check.sh`를 통해 인터페이스, 라우트, Peer Ping을 단계별로 체크하는 방식이 견고합니다.
+- **프로세스 괠리**: Procd를 사용한 `failover_monitor` 서비스 등록으로 자동 재실행(respawn) 및 괠리가 용이합니다.
+- **방화벽 설정**: `wan5g` 존을 기존 `wan` 존에 통합하여 마스키레이드 및 포워딩 규칙을 간소화한 점이 적절합니다.
+- **안정성**: `MIN_FAILBACK_INTERVAL` (120초) 도입을 통해 네트워크 플래핑(Flapping)을 방지한 설계가 돋보입니다.
+
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>TR-069를 통한 WiFi 채널 설정이 반영되지 않던 스크립트 오류를 수정했습니다.
 
 **상세 리뷰:**
 - **결함 분석**: `case` 문에서 문자열 "1"/"0"에 대한 누락된 처리를 보강하고, 변수 오타($$E_... ➔ $E_...)를 바로잡았습니다.
@@ -60,4 +68,4 @@
 - **보안 및 Fault**: `getEthSlaves` 내에서 `topoBuffer` 할당 실패 시의 예외 처리가 적절하며, `delete` 키워드를 통한 자원 해제가 정확합니다.
 - **유지보수**: 메시 관리 기능을 별도 함수로 모듈화하여 코드 가독성을 높였습니다.
 
-**Verdict: LGTM**</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-22 13:04:04 (KST)</div></div></body></html>
+**Verdict: LGTM**</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-22 17:05:14 (KST)</div></div></body></html>
