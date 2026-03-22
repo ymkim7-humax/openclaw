@@ -1,15 +1,5 @@
 [
   {
-    "timestamp": "2026-03-07 09:59:32",
-    "model": "HP2272B",
-    "git_hash": "6732d3e9b",
-    "bin_size": 59084800,
-    "rootfs_files": 4291,
-    "filename": "hp2272b_tclinux_20260307_034000.bin",
-    "file_exists": true,
-    "changes": "N/A"
-  },
-  {
     "timestamp": "2026-03-07 03:40:14",
     "model": "HP2236B",
     "git_hash": "b8cf11734",
@@ -17,7 +7,7 @@
     "rootfs_files": 4311,
     "filename": "hp2236b_tclinux_20260307_030525.bin",
     "file_exists": true,
-    "changes": "N/A"
+    "changes": "+/- 0"
   },
   {
     "timestamp": "2026-03-06 05:08:11",

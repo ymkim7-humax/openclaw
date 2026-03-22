@@ -1,44 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>OC Public Portal</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>INTERNAL Build Analytics</title>
     <style>
-        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 40px; text-align: center; }
-        .grid { display: grid; gap: 20px; max-width: 600px; margin: 40px auto; }
-        .btn { background: #1e293b; border: 1px solid #334155; padding: 20px; border-radius: 8px; text-decoration: none; color: inherit; transition: 0.2s; text-align: left; display: flex; align-items: center; }
-        .btn:hover { border-color: #3b82f6; background: #243352; }
-        .icon { font-size: 2rem; margin-right: 20px; }
-        .info { flex: 1; }
-        .name { font-weight: bold; font-size: 1.1rem; color: #34d399; }
-        .desc { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
-        h1 { color: #3b82f6; }
-    </style>
-</head>
-<body>
-    <h1>🚀 OC Public Status</h1>
-    <div class="grid">
-        <a href="auto_build/index.html" class="btn">
-            <div class="icon">📊</div>
-            <div class="info">
-                <div class="name">Build Status</div>
-                <div class="desc">Artifact hashes & metadata</div>
-            </div>
-        </a>
-        <a href="gerrit_review/index.html" class="btn">
-            <div class="icon">🔍</div>
-            <div class="info">
-                <div class="name">Review Analytics</div>
-                <div class="desc">Public code quality report</div>
-            </div>
-        </a>
-        <a href="hp2236b_analysis/index.html" class="btn">
-            <div class="icon">🧠</div>
-            <div class="info">
-                <div class="name">Analysis Progress</div>
-                <div class="desc">HP2236B codebase mapping status</div>
-            </div>
-        </a>
-    </div>
-</body>
-</html>
+        body { background: #0f172a; color: #f1f5f9; font-family: sans-serif; padding: 20px; }
+        .card { background: #1e293b; border-radius: 8px; padding: 20px; border: 1px solid #334155; max-width: 1100px; margin: auto; margin-bottom: 40px; }
+        h2 { color: #3b82f6; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; color: #94a3b8; font-size: 12px; border-bottom: 2px solid #334155; }
+        td { padding: 12px; font-size: 13px; border-bottom: 1px solid #1e293b; }
+        .success { color: #34d399; font-weight: bold; }
+        .failed { color: #f87171; font-weight: bold; }
+        .analysis { background: #000; padding: 10px; border-radius: 4px; font-size: 11px; color: #fbbf24; margin-top: 5px; }
+        code { background: #000; padding: 2px 5px; border-radius: 3px; color: #34d399; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #3b82f6; text-decoration: none; font-size: 0.9rem; }
+    </style></head><body><div style='max-width: 1100px; margin: auto;'><a href='../../../index.html' class='back-link'>← Back to Portal</a><h1 style='text-align:center;'>INTERNAL Build Analytics</h1><div class='card'><h2>HP2236B</h2><table><thead><tr><th>Date</th><th>Status</th><th>Git Hash</th><th>Size</th><th>RootFS</th><th>Artifact/Analysis</th></tr></thead><tbody><tr><td>2026-03-06 05:07:57</td><td class='success'>SUCCESS</td><td><code>cb9e3b99c</code></td><td>57,761,792 B</td><td>3285 files</td><td><a href='../release/hp2236b_tclinux_20260306_030002.bin' style='color:#34d399;'>hp2236b_tclinux_20260306_030002.bin</a></td></tr><tr><td>2026-03-05 04:47:11</td><td class='success'>SUCCESS</td><td><code>cb9e3b99c</code></td><td>57,757,696 B</td><td>3285 files</td><td><a href='../release/hp2236b_tclinux_20260305_041217.bin' style='color:#34d399;'>hp2236b_tclinux_20260305_041217.bin</a></td></tr><tr><td>2026-03-03 12:14:11</td><td class='success'>SUCCESS</td><td><code>cb9e3b99c</code></td><td>57,765,888 B</td><td>3285 files</td><td><a href='../release/hp2236b_tclinux_20260303_114047.bin' style='color:#34d399;'>hp2236b_tclinux_20260303_114047.bin</a></td></tr><tr><td>2026-02-27 10:30:31</td><td class='success'>SUCCESS</td><td><code>cb9e3b99c</code></td><td>57,708,544 B</td><td>3285 files</td><td><a href='../release/hp2236b_tclinux_20260227_100207.bin' style='color:#34d399;'>hp2236b_tclinux_20260227_100207.bin</a></td></tr><tr><td>2026-02-25 21:58:16</td><td class='success'>SUCCESS</td><td><code>cb9e3b99c</code></td><td>57,720,832 B</td><td>3285 files</td><td><a href='../release/hp2236b_tclinux_20260225_195053.bin' style='color:#34d399;'>hp2236b_tclinux_20260225_195053.bin</a></td></tr></tbody></table></div><div class='card'><h2>HP2272B</h2><table><thead><tr><th>Date</th><th>Status</th><th>Git Hash</th><th>Size</th><th>RootFS</th><th>Artifact/Analysis</th></tr></thead><tbody><tr><td>2026-03-06 05:08:11</td><td class='success'>SUCCESS</td><td><code>7c960d4f5</code></td><td>59,088,896 B</td><td>3293 files</td><td><a href='../release/hp2272b_tclinux_20260306_030002.bin' style='color:#34d399;'>hp2272b_tclinux_20260306_030002.bin</a></td></tr><tr><td>2026-03-05 04:47:22</td><td class='failed'>FAILED</td><td><code>Unknown</code></td><td>0 B</td><td>0 files</td><td>N/A<div class='analysis'><b>Failure Analysis:</b><br>src/FalNetwork.cpp: undefined macro HNI_VAL_WAN_SERVICE_INTERNET_TR069</div></td></tr><tr><td>2026-03-05 04:47:22</td><td class='success'>SUCCESS</td><td><code>7c960d4f5</code></td><td>59,080,704 B</td><td>3293 files</td><td><a href='../release/hp2272b_tclinux_20260305_041217.bin' style='color:#34d399;'>hp2272b_tclinux_20260305_041217.bin</a></td></tr><tr><td>2026-02-27 16:35:44</td><td class='success'>SUCCESS</td><td><code>7c960d4f5</code></td><td>59,011,072 B</td><td>3293 files</td><td><a href='../release/hp2272b_tclinux_20260227_100207.bin' style='color:#34d399;'>hp2272b_tclinux_20260227_100207.bin</a></td></tr><tr><td>2026-02-25 21:58:37</td><td class='success'>SUCCESS</td><td><code>7c960d4f5</code></td><td>59,011,072 B</td><td>3293 files</td><td><a href='../release/hp2272b_tclinux_20260225_195053.bin' style='color:#34d399;'>hp2272b_tclinux_20260225_195053.bin</a></td></tr></tbody></table></div></div></body></html>

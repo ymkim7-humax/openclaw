@@ -16,62 +16,56 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../../../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">INTERNAL Gerrit Review Summary</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80160' target='_blank'>[ARHT-411] Disabled X_HNI_xxx,</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80159' target='_blank'>[ARHT-164] Disabled TCSUPPORT_VOIP,</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80157' target='_blank'>[ARHT-183] HNI_MODEL_NAME</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q1 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80149' target='_blank'>[HP2236BVA-159] modify HalMesh_getBackhaulCfg to remove error 500 on GUI</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80145' target='_blank'>[HP2236BVA-180][CWMP] File corrupted return after SW upgrade via ACS</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>전달해주신 패치를 분석한 결과, 해당 변경 사항에 대해 다음과 같은 피드백을 드립니다.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80218' target='_blank'>[BIFROST-78] [5GNR] failover scenario</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>PON 장애 시 5GNR로의 Failover 및 복구(Fallback) 시나리오를 구현한 패치입니다.
 
-<details><summary>Detailed Feedback</summary>
+**상세 리뷰:**
+- **모니터링 로직**: `pon_health_check.sh`를 통해 인터페이스, 라우트, Peer Ping을 단계별로 체크하는 방식이 견고합니다.
+- **프로세스 괠리**: Procd를 사용한 `failover_monitor` 서비스 등록으로 자동 재실행(respawn) 및 괠리가 용이합니다.
+- **방화벽 설정**: `wan5g` 존을 기존 `wan` 존에 통합하여 마스키레이드 및 포워딩 규칙을 간소화한 점이 적절합니다.
+- **안정성**: `MIN_FAILBACK_INTERVAL` (120초) 도입을 통해 네트워크 플래핑(Flapping)을 방지한 설계가 돋보입니다.
 
-### 분석 개요
-본 패치는 ACS를 통한 SW 업그레이드 시 "File corrupted" 에러가 반환되는 문제를 해결하기 위해 `/sbin/sysupgrade` 스크립트 끝에 `exit 0`을 추가한 것입니다.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80152' target='_blank'>[HP2236BVA-143]Fix: 2.4G channel cannot be changed</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>TR-069를 통한 WiFi 채널 설정이 반영되지 않던 스크립트 오류를 수정했습니다.
 
-### 문제점 및 잠재적 위험 요소
+**상세 리뷰:**
+- **결함 분석**: `case` 문에서 문자열 "1"/"0"에 대한 누락된 처리를 보강하고, 변수 오타($$E_... ➔ $E_...)를 바로잡았습니다.
+- **보안**: 쉘 스크립트 내 명령 실행 시 `common_execute_command_in_apply_service`를 사용하여 안정적인 실행을 보장합니다.
 
-1.  **오류 마스킹 (Error Masking):**
-    `sysupgrade` 스크립트의 마지막 명령인 `ubus call system sysupgrade "$(json_dump)"`가 실패하더라도 스크립트는 항상 `0` (성공)을 반환하게 됩니다. 만약 시스템 리소스 부족이나 `procd` 통신 문제로 인해 실제 업그레이드 요청이 접수되지 않았음에도 불구하고 ACS 측에는 성공으로 보고되어, 실제로는 업그레이드가 되지 않았는데 관리 서버에서는 성공한 것으로 오인할 수 있는 상태가 발생할 수 있습니다.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80177' target='_blank'>[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>포트 바인딩 환경에서 게이트웨이 주소 유실 문제를 해결하기 위한 netifd 패치입니다.
 
-2.  **근본 원인 확인 필요:**
-    `sysupgrade`가 왜 non-zero 코드를 반환했는지에 대한 분석이 누락되어 보입니다. 일반적으로 `ubus call`은 호출 성공 시 0을 반환합니다. 만약 이 호출 이전에 발생한 다른 명령의 종료 코드가 전달되는 것이라면, 특정 조건에서만 `exit 0`이 수행되도록 하거나, 실패 지점에서 명시적으로 에러 처리를 하는 것이 안전합니다.
+**상세 리뷰:**
+- **결함 분석**: 커스텀 라우팅 테이블 정보를 메인 테이블로 미러링하는 로직(`system_add_rt_main`)을 추가하여 라우팅 경로를 확보했습니다.
+- **유지보수**: `HNI_SUPPORT_PORT_BINDING` 매크로 분기를 통해 기존 표준 netifd와 HNI 전용 기능을 명확히 분리했습니다.
 
-3.  **CWMP 규격 준수 관련:**
-    CWMP(TR-069) 환경에서 `Download` RPC 이후 업그레이드가 진행될 때, CPE는 `TransferComplete`를 보내야 합니다. 만약 스크립트가 종료되기도 전에 시스템이 리부팅되거나 프로세스가 종료되면서 발생하는 일시적인 반환값 문제라면, `exit 0` 보다는 호출하는 쪽(CWMP Client)에서의 예외 처리나, 스크립트 내에서의 적절한 동기화가 더 적절할 수 있습니다.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80193' target='_blank'>[ARHT-390] fix potential invalid memory access in DNS recap handling</a></div><span class="badge detail-badge">Detailed Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>DNS Trap 모듈의 커널 패닉 및 메모리 접근 오류를 해결한 **매우 중요한 패치**입니다.
 
-### 권장 사항
-- `ubus call`의 실행 결과를 확인하고, 성공한 경우에만 `exit 0`을 수행하도록 수정하는 것을 권장합니다.
-- 예: `ubus call system sysupgrade "$(json_dump)" && exit 0`
-- 또는, 스크립트 상단에 `set -e`가 설정되어 있는지 확인하고, 의도하지 않은 실패가 종료 코드에 영향을 주지 않도록 로직을 검토해야 합니다.
+**상세 리뷰:**
+- **결함 분석**: 이더넷 헤더가 없는 패킷(PPP 등) 처리 시 발생하던 잘못된 메모리 참조를 `skb_network_offset` 체크를 통해 차단했습니다.
+- **보안 및 Fault**: `pskb_expand_head`를 사용하여 패킷 확장 시 발생할 수 있는 커널 메모리 할당 실패 상황을 고려했습니다.
+- **주의 사항**: `skb_linearize` 호출 이후 `skb` 버퍼가 재할당될 수 있으므로, 이후 포인터 참조 시 최신화된 `skb->data`를 사용하는지 재검토가 필요합니다.
 
-</details></div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80118' target='_blank'>[HP2236BVA-110] Update ISP lock status handling</a></div><span class="badge detail-badge">Needs Revision</span></div><div class="meta">Project: airoha/2025q3 | Owner: Deuckyu Kim(김득규)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>I will now search for the symbols `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the codebase to verify the naming consistency and check for `OPTION_LOCKED_STATE` and `CONFIG_ISPLOCKING`.
+**Verdict: LGTM (With minor pointer caution)**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80150' target='_blank'>[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>WAN 측 웹 접속 차단 해제 시의 조건부 로직 오류를 수정했습니다.
 
-I will now list the contents of `temp_repo/` to locate the project source code and verify the naming consistency and definitions.
+**상세 리뷰:**
+- **결함 분석**: 화이트리스트 규칙 판별 시 `active` 플래그와 `serviceName` 체크를 논리적으로 묶어 의도치 않은 차단을 방지했습니다.
+- **유지보수**: `rulePolicy` 할당 시 불필요한 if-else 문을 삼항 연산자와 논리 비교로 간소화하여 코드를 최적화했습니다.
 
-I will now list all files and subdirectories in `temp_repo/` to understand its structure and locate the source code.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>부트스트랩 시간 단축 및 ACS 접속 실패 문제를 해결한 패치입니다.
 
-I will now list the contents of `temp_repo` again, this time without respecting ignore files, to confirm if the source code is present.
+**상세 리뷰:**
+- **결함 분석**: 지원하지 않는 TR-098 기능을 빠르게 거절(Fast Rejection)하여 초기화 속도를 대폭 개선했습니다.
+- **유지보수**: `unsupported_features` 스크립트를 신설하여 지원 불가 항목을 한곳에서 관리하도록 모듈화했습니다.
 
-I will now check the current directory once more for the project files, as they are not in `temp_repo`.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80217' target='_blank'>[ARHT-56] Show MAC address in uppercase for Mesh Controller device</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>표시 일관성을 위해 MAC 주소를 대문자로 변환하는 간단하지만 중요한 수정입니다.
 
-I will now search for `HalNetwork_isIspLocked` and `HalGateway_isIspLocked` in the current directory and its subdirectories to see if they appear in any other files.
+**상세 리뷰:**
+- **결함 분석**: `HalUtils_toUpper`를 사용하여 규격에 맞는 형식으로 변환합니다.
+- **유지보수**: 불필요한 `ret` 변수 사용을 제거하고 `return HAL_FAILURE`로 직접 반환하도록 구조를 개선했습니다.
 
-The analysis of the patch for project 'airoha/2025q3' reveals a discrepancy between the commit message and the actual implementation, though the code itself appears sound.
+**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>홈페이지에서 LAN IP가 잘못 표시되는 문제를 FalMesh_updateLanInfo 도입을 통해 해결했습니다.
 
-<details><summary>Detailed Feedback</summary>
+**상세 리뷰:**
+- **결함 분석**: 컨트롤러/에이전트 모드에 따른 브릿지 IP 매핑 로직을 보강하여 실제 할당된 IP가 UI에 반영되도록 수정되었습니다.
+- **보안 및 Fault**: `getEthSlaves` 내에서 `topoBuffer` 할당 실패 시의 예외 처리가 적절하며, `delete` 키워드를 통한 자원 해제가 정확합니다.
+- **유지보수**: 메시 관리 기능을 별도 함수로 모듈화하여 코드 가독성을 높였습니다.
 
-### 1. Commit Message Mismatch
-There is a significant inconsistency between the commit message and the actual code changes:
-*   **Commit Message:** Claims to use `HalNetwork_isIspLocked()` in `hal_network.c`.
-*   **Actual Code:** Implements `HalGateway_isIspLocked()` in `hal_gateway.c` and updates `ledctrl.c` to use this new function.
-*   **Recommendation:** Update the commit message to accurately reflect the function and file names used in the implementation (e.g., replace `HalNetwork_isIspLocked` with `HalGateway_isIspLocked`).
-
-### 2. Logic and Implementation
-*   **`hal_gateway.c`:** The implementation of `HalGateway_isIspLocked()` is correct. It properly uses `HalConfig_get` with the appropriate constants (`CONFIG_ISPLOCKING`, `OPTION_LOCKED_STATE`) and returns a boolean based on a string comparison with `"1"`.
-*   **`vendor_preinit`:** Initializing `isplocking.@isplocking[0].locked='0'` is a necessary and correct addition to ensure consistent state after boot.
-*   **`ledctrl.c`:** The refactoring of `check_internet_status` is an improvement.
-    *   It simplifies the flow by removing redundant `else` blocks.
-    *   It ensures that `Hal_setInternetLed(INTERNET_LED_RED_OFF)` is called if the ISP is no longer locked, which is a cleaner way to handle state transitions.
-
-### 3. Minor Observations
-*   The use of `STR_LEN_8` for the `value` buffer in `HalGateway_isIspLocked()` is appropriate for storing "0" or "1".
-*   The logic transition for `INTERNET_LED_FW_UPGRADE` was also simplified (removing the `else` block), which is consistent with the other changes.
-
-</details>
-
-**Summary:** The technical implementation is solid and improves the code structure, but the **commit message must be corrected** to match the implementation details.</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80084' target='_blank'>[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject"><a href='http://git.humax-networks.com:8080/80120' target='_blank'>[HP2236BVA-31] Fix LAN IP display wrong in Home page</a></div><span class="badge detail-badge">Pending Analysis</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>Analyzing...</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-20 13:09:38 (KST)</div></div></body></html>
+**Verdict: LGTM**</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-23 08:50:57 (KST)</div></div></body></html>
