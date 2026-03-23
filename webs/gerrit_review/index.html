@@ -16,56 +16,11 @@
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[BIFROST-78] [5GNR] failover scenario</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>PON 장애 시 5GNR로의 Failover 및 복구(Fallback) 시나리오를 구현한 패치입니다.
-
-**상세 리뷰:**
-- **모니터링 로직**: `pon_health_check.sh`를 통해 인터페이스, 라우트, Peer Ping을 단계별로 체크하는 방식이 견고합니다.
-- **프로세스 괠리**: Procd를 사용한 `failover_monitor` 서비스 등록으로 자동 재실행(respawn) 및 괠리가 용이합니다.
-- **방화벽 설정**: `wan5g` 존을 기존 `wan` 존에 통합하여 마스키레이드 및 포워딩 규칙을 간소화한 점이 적절합니다.
-- **안정성**: `MIN_FAILBACK_INTERVAL` (120초) 도입을 통해 네트워크 플래핑(Flapping)을 방지한 설계가 돋보입니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>TR-069를 통한 WiFi 채널 설정이 반영되지 않던 스크립트 오류를 수정했습니다.
-
-**상세 리뷰:**
-- **결함 분석**: `case` 문에서 문자열 "1"/"0"에 대한 누락된 처리를 보강하고, 변수 오타($$E_... ➔ $E_...)를 바로잡았습니다.
-- **보안**: 쉘 스크립트 내 명령 실행 시 `common_execute_command_in_apply_service`를 사용하여 안정적인 실행을 보장합니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>포트 바인딩 환경에서 게이트웨이 주소 유실 문제를 해결하기 위한 netifd 패치입니다.
-
-**상세 리뷰:**
-- **결함 분석**: 커스텀 라우팅 테이블 정보를 메인 테이블로 미러링하는 로직(`system_add_rt_main`)을 추가하여 라우팅 경로를 확보했습니다.
-- **유지보수**: `HNI_SUPPORT_PORT_BINDING` 매크로 분기를 통해 기존 표준 netifd와 HNI 전용 기능을 명확히 분리했습니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-390] fix potential invalid memory access in DNS recap handling</div><span class="badge detail-badge">Detailed Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>DNS Trap 모듈의 커널 패닉 및 메모리 접근 오류를 해결한 **매우 중요한 패치**입니다.
+        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[BIFROST-78] [5GNR] failover scenario</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-390] fix potential invalid memory access in DNS recap handling</div><span class="badge detail-badge">Detailed Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>DNS Trap 모듈의 커널 패닉 및 메모리 접근 오류를 해결한 **매우 중요한 패치**입니다.
 
 **상세 리뷰:**
 - **결함 분석**: 이더넷 헤더가 없는 패킷(PPP 등) 처리 시 발생하던 잘못된 메모리 참조를 `skb_network_offset` 체크를 통해 차단했습니다.
 - **보안 및 Fault**: `pskb_expand_head`를 사용하여 패킷 확장 시 발생할 수 있는 커널 메모리 할당 실패 상황을 고려했습니다.
 - **주의 사항**: `skb_linearize` 호출 이후 `skb` 버퍼가 재할당될 수 있으므로, 이후 포인터 참조 시 최신화된 `skb->data`를 사용하는지 재검토가 필요합니다.
 
-**Verdict: LGTM (With minor pointer caution)**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>WAN 측 웹 접속 차단 해제 시의 조건부 로직 오류를 수정했습니다.
-
-**상세 리뷰:**
-- **결함 분석**: 화이트리스트 규칙 판별 시 `active` 플래그와 `serviceName` 체크를 논리적으로 묶어 의도치 않은 차단을 방지했습니다.
-- **유지보수**: `rulePolicy` 할당 시 불필요한 if-else 문을 삼항 연산자와 논리 비교로 간소화하여 코드를 최적화했습니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>부트스트랩 시간 단축 및 ACS 접속 실패 문제를 해결한 패치입니다.
-
-**상세 리뷰:**
-- **결함 분석**: 지원하지 않는 TR-098 기능을 빠르게 거절(Fast Rejection)하여 초기화 속도를 대폭 개선했습니다.
-- **유지보수**: `unsupported_features` 스크립트를 신설하여 지원 불가 항목을 한곳에서 관리하도록 모듈화했습니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-56] Show MAC address in uppercase for Mesh Controller device</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Chunsu Lim(임춘수)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>표시 일관성을 위해 MAC 주소를 대문자로 변환하는 간단하지만 중요한 수정입니다.
-
-**상세 리뷰:**
-- **결함 분석**: `HalUtils_toUpper`를 사용하여 규격에 맞는 형식으로 변환합니다.
-- **유지보수**: 불필요한 `ret` 변수 사용을 제거하고 `return HAL_FAILURE`로 직접 반환하도록 구조를 개선했습니다.
-
-**Verdict: LGTM**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>홈페이지에서 LAN IP가 잘못 표시되는 문제를 FalMesh_updateLanInfo 도입을 통해 해결했습니다.
-
-**상세 리뷰:**
-- **결함 분석**: 컨트롤러/에이전트 모드에 따른 브릿지 IP 매핑 로직을 보강하여 실제 할당된 IP가 UI에 반영되도록 수정되었습니다.
-- **보안 및 Fault**: `getEthSlaves` 내에서 `topoBuffer` 할당 실패 시의 예외 처리가 적절하며, `delete` 키워드를 통한 자원 해제가 정확합니다.
-- **유지보수**: 메시 관리 기능을 별도 함수로 모듈화하여 코드 가독성을 높였습니다.
-
-**Verdict: LGTM**</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-23 08:50:57 (KST)</div></div></body></html>
+**Verdict: LGTM (With minor pointer caution)**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-23 10:25:22 (KST)</div></div></body></html>
