@@ -10,17 +10,71 @@
         pre { background: #000; padding: 15px; border-radius: 6px; overflow-x: auto; color: #e2e8f0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
         a { color: #3b82f6; text-decoration: none; }
         a:hover { text-decoration: underline; }
-        .footer { text-align: center; color: #64748b; font-size: 10px; margin-top: 40px; }
-    </style>
-    </head><body>
+    </style></head><body>
     <div style="max-width: 1000px; margin: auto;">
         <a href="../index.html" style="color:#3b82f6; text-decoration:none;">← Back to Portal</a>
         <h1 style="text-align:center; color:#3b82f6;">Public Gerrit Review Analytics</h1>
-        <div id="reviews-container"><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[BIFROST-78] [5GNR] failover scenario</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[ARHT-390] fix potential invalid memory access in DNS recap handling</div><span class="badge detail-badge">Detailed Feedback</span></div><div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>DNS Trap 모듈의 커널 패닉 및 메모리 접근 오류를 해결한 **매우 중요한 패치**입니다.
+        <div id="reviews-container">
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[BIFROST-78] [5GNR] failover scenario</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q1 | Owner: Dongjun Lee(이동준)</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-143]Fix: 2.4G channel cannot be changed</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-155] Fix error cannot get IP Gateway address for all WAN Interface</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Dante</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[ARHT-390] fix potential invalid memory access in DNS recap handling</div>
+                <span class="badge detail-badge">DETAILED FEEDBACK</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Sungwook Joe(조성욱)</div>
+            <div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'><pre>DNS Trap 모듈의 커널 패닉 및 메모리 접근 오류를 해결한 **매우 중요한 패치**입니다.
 
 **상세 리뷰:**
 - **결함 분석**: 이더넷 헤더가 없는 패킷(PPP 등) 처리 시 발생하던 잘못된 메모리 참조를 `skb_network_offset` 체크를 통해 차단했습니다.
 - **보안 및 Fault**: `pskb_expand_head`를 사용하여 패킷 확장 시 발생할 수 있는 커널 메모리 할당 실패 상황을 고려했습니다.
 - **주의 사항**: `skb_linearize` 호출 이후 `skb` 버퍼가 재할당될 수 있으므로, 이후 포인터 참조 시 최신화된 `skb->data`를 사용하는지 재검토가 필요합니다.
 
-**Verdict: LGTM (With minor pointer caution)**</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div><div class="review-card"><div style="display:flex; justify-content:space-between; align-items:start;"><div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div><span class="badge lgtm-badge">LGTM</span></div><div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div><div style='margin-top:10px; padding:15px; background:rgba(255,255,255,0.05); border-radius:4px;'>LGTM</div></div></div><div class='footer'>Dashboard Last Updated: 2026-03-23 10:25:22 (KST)</div></div></body></html>
+**Verdict: LGTM (With minor pointer caution)**</pre></div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-44] Fix cannot access WEBUI from WAN side when disable block service control</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Vincent</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-79][HP-2236B]Fix - Cannot access to ACS</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: Moonseong Choi(최문성)</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div>
+        <div class="review-card">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+                <div class="subject">[HP2236BVA-31] Fix LAN IP display wrong in Home page</div>
+                <span class="badge lgtm-badge">LGTM</span>
+            </div>
+            <div class="meta">Project: airoha/2025q3 | Owner: [Marusys VINA] Tien</div>
+            <div style='margin-top:10px; color:#34d399; font-weight:bold;'>LGTM</div>
+        </div></div></div></body></html>
